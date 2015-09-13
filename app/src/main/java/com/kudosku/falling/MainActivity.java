@@ -1,4 +1,4 @@
-package kudosku.falling;
+package com.kudosku.falling;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

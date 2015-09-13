@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Falling</string>
+
+    <string name="settings">설정</string>
+    <string name="credits">제작자</string>
+    <string name="use_gps_title">GPS 사용</string>
+    <string name="use_gps_summary">GPS로 정확한 거리를 측정합니다.</string>
+</resources>

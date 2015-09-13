@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="setting_pref" >
+    <CheckBoxPreference
+        android:key="Gps_use"
+        android:title="@string/use_gps_title"
+        android:summary="@string/use_gps_summary"
+        android:defaultValue="true" />
+
+</PreferenceScreen>

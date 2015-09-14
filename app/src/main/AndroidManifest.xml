@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kudosku.falling" >
 
+    <service android:name="com.kudosku.falling.AppService"
+        android:process=":com.kudosku.falling.Process"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

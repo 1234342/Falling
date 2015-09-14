@@ -1,7 +1,11 @@
 package com.kudosku.falling;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -13,6 +17,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch(keyCode) {
+
+            case KeyEvent.KEYCODE_BACK:
+
+                String exitTitle = getResources().getString(R.string.app_name);
+                String exitMsg = getResources().getString(R.string.exit_summary);
+                String exitbtnYes = getResources().getString(R.string.yes);
+                String exitbtnNo = getResources().getString(R.string.no);
+
+                new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(exitTitle)
+                    .setMessage(exitMsg)
+                    .setNegativeButton(exitbtnYes, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int whith) {
+                            moveTaskToBack(true);
+                            finish();
+                        }
+                    })
+                    .setPositiveButton(exitbtnNo, null)
+                    .show();
+        }
+        return true;
     }
 
     @Override
@@ -37,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings:
                 Intent itn2 = new Intent(MainActivity.this, Setting.class);
                 startActivity(itn2);
+                return true;
+            case R.id.credits:
+                Intent itn3 = new Intent(MainActivity.this, Credits.class);
+                startActivity(itn3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

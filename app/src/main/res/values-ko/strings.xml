@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Falling</string>
 
+    <string name="yes">네</string>
+    <string name="no">아니요</string>
+
+    <string name="exit_summary">정말로 종료하시겠습니까?</string>
+
     <string name="settings">설정</string>
     <string name="credits">제작자</string>
     <string name="use_gps_title">GPS 사용</string>

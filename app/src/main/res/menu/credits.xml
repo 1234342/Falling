@@ -2,5 +2,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/credits" android:title="@string/credits"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="101" app:showAsAction="never" />
 </menu>

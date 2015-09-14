@@ -1,5 +1,6 @@
 package com.kudosku.falling;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -13,12 +14,16 @@ public class AppService extends Service {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(getApplicationContext(), "서비스를 시작", Toast.LENGTH_LONG).show();
+
+        startForeground(1, new Notification());
+        Toast.makeText(getApplicationContext(), "서비스를 시작합니다.", Toast.LENGTH_LONG).show();
+
         return Service.START_STICKY;
     }
 
     public void onDestroy(){
-        Toast.makeText(getApplicationContext(), "서비스를 중지", Toast.LENGTH_LONG).show();
+        stopForeground(true);
+        Toast.makeText(getApplicationContext(), "서비스를 중지합니다.", Toast.LENGTH_LONG).show();
     }
 
     @Override

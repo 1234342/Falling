@@ -12,7 +12,7 @@ public class Receiver extends BroadcastReceiver {
         String action= intent.getAction();
 
         if( action.equals("android.intent.action.BOOT_COMPLETED") ){
-            Intent i= new Intent(context, MainActivity.class);
+            Intent i= new Intent(context, AppService.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
         }

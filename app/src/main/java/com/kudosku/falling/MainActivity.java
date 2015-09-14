@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onClick(DialogInterface dialog, int whith) {
-                            Intent svi = new Intent(MainActivity.this, AppService.class);
-                            stopService(svi);
                             moveTaskToBack(true);
                             finish();
                         }

@@ -10,6 +10,4 @@
     <string name="credits">Credits</string>
     <string name="use_gps_title">GPS Use</string>
     <string name="use_gps_summary">It will measure the exact distance to the GPS.</string>
-
-    <string name="credit_yuahp">YuahP</string>
 </resources>

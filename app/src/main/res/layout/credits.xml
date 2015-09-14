@@ -4,13 +4,9 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context=".Credits">
 
-    <TextView
-        android:layout_width="100px"
-        android:layout_height="200px"
-        android:text="@string/credit_yuahp"/>
-
-
-
-
+    <ListView
+        android:id="@+id/credits_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

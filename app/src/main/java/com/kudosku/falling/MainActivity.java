@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        Intent svi = new Intent(MainActivity.this, AppService.class);
+        startService(svi);
 
     }
 
@@ -36,12 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onClick(DialogInterface dialog, int whith) {
+                            Intent svi = new Intent(MainActivity.this, AppService.class);
+                            stopService(svi);
                             moveTaskToBack(true);
                             finish();
                         }
                     })
                     .setPositiveButton(exitbtnNo, null)
                     .show();
+                    return true;
+            case KeyEvent.KEYCODE_MENU:
+                return false;
         }
         return true;
     }

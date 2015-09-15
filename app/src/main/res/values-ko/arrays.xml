@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="refresh_times">
+        <item>30 분</item>
+        <item>1 시간</item>
+        <item>2 시간</item>
+        <item>3 시간</item>
+        <item>4 시간</item>
+        <item>5 시간</item>
+        <item>6 시간</item>
+        <item>7 시간</item>
+        <item>8 시간</item>
+        <item>9 시간</item>
+        <item>10 시간</item>
+        <item>11 시간</item>
+        <item>12 시간</item>
+        <item>1 일</item>
+    </string-array>
+</resources>

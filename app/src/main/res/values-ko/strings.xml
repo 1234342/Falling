@@ -23,5 +23,8 @@
     <string name="use_auto_service_title">자동 서비스 실행</string>
     <string name="use_auto_service_summary">앱을 킬때 자동으로 서비스가 시작합니다.</string>
 
+    <string name="select_refresh_time_title">날씨 데이터 새로고침 주기</string>
+    <string name="select_refresh_time_summary">정해진 주기에 따라 날씨 데이터를 새로고침합니다.</string>
+
     <string name="credits">제작자</string>
 </resources>

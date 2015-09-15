@@ -3,10 +3,18 @@
     android:key="setting_pref" >
     <PreferenceCategory android:title="@string/settings_features">
         <CheckBoxPreference
-        android:key="Gps_use"
-        android:title="@string/use_gps_title"
-        android:summary="@string/use_gps_summary"
-        android:defaultValue="true" />
+            android:key="Gps_use"
+            android:title="@string/use_gps_title"
+            android:summary="@string/use_gps_summary"
+            android:defaultValue="true" />
+
+        <ListPreference
+            android:key="refresh"
+            android:title="@string/select_refresh_time_title"
+            android:summary="@string/select_refresh_time_summary"
+            android:defaultValue="0"
+            android:entries="@array/refresh_times"
+            android:entryValues="@array/refresh_time_values" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_application">

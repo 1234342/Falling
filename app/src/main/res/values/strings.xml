@@ -23,5 +23,8 @@
     <string name="use_auto_service_title">Auto service start</string>
     <string name="use_auto_service_summary">Automatically service is started at the time of launch the app.</string>
 
+    <string name="select_refresh_time_title">Weather data refresh rate</string>
+    <string name="select_refresh_time_summary">Refresh the weather data in accordance with the prescribed period.</string>
+
     <string name="credits">Credits</string>
 </resources>

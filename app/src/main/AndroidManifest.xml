@@ -4,11 +4,23 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="22"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <receiver
+            android:name=".Receiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".Splash"
@@ -33,16 +45,6 @@
             android:name="Credits"
             android:label="@string/credits" >
         </activity>
-
-        <receiver
-            android:name="Receiver"
-            android:enabled="true"
-            android:exported="false"
-            android:label="Receiver">
-            <intent-filter >
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
 
         <service android:name=".AppService"
             android:process=":remote">

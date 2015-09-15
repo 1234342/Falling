@@ -3,6 +3,8 @@ package com.kudosku.falling;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
         List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(50);
 
-        if (!(isServiceRunning(AppService.class)) ) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isAutoOn = sharedPref.getBoolean("auto_service", true);
+
+        if (!(isServiceRunning(AppService.class)) && isAutoOn) {
             Intent svi = new Intent(MainActivity.this, AppService.class);
             startService(svi);
         }

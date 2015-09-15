@@ -7,10 +7,21 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
+    <string name="service_start">Service Started</string>
+    <string name="service_stop">Service Stopped</string>
+
     <string name="exit_summary">Are you sure you want to exit?</string>
 
     <string name="settings">Settings</string>
-    <string name="credits">Credits</string>
+    <string name="settings_features">Features</string>
+    <string name="settings_application">Application</string>
+
     <string name="use_gps_title">GPS Use</string>
     <string name="use_gps_summary">It will measure the exact distance to the GPS.</string>
+    <string name="use_boot_start_title">Running app at boot</string>
+    <string name="use_boot_start_summary">Automatically turned on every time you turn on the device.</string>
+    <string name="use_auto_service_title">Auto service start</string>
+    <string name="use_auto_service_summary">Automatically service is started at the time of launch the app.</string>
+
+    <string name="credits">Credits</string>
 </resources>

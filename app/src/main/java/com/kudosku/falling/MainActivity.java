@@ -5,10 +5,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+import android.widget.Toast;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,9 +20,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        Intent svi = new Intent(MainActivity.this, AppService.class);
-        startService(svi);
 
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(50);
+
+        if (!(isServiceRunning(AppService.class)) ) {
+            Intent svi = new Intent(MainActivity.this, AppService.class);
+            startService(svi);
+        }
+
+    }
+
+    public boolean isServiceRunning (Class<?> serviceclass) {
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : am.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceclass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

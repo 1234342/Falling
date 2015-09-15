@@ -7,10 +7,21 @@
     <string name="yes">네</string>
     <string name="no">아니요</string>
 
+    <string name="service_start">서비스가 시작되었습니다</string>
+    <string name="service_stop">서비스가 종료되었습니다</string>
+
     <string name="exit_summary">정말로 종료하시겠습니까?</string>
 
     <string name="settings">설정</string>
-    <string name="credits">제작자</string>
+    <string name="settings_features">기능들</string>
+    <string name="settings_application">어플리케이션</string>
+
     <string name="use_gps_title">GPS 사용</string>
     <string name="use_gps_summary">GPS로 정확한 거리를 측정합니다.</string>
+    <string name="use_boot_start_title">부팅시 앱 실행</string>
+    <string name="use_boot_start_summary">디바이스를 킬때마다 앱이 자동으로 켜집니다.</string>
+    <string name="use_auto_service_title">자동 서비스 실행</string>
+    <string name="use_auto_service_summary">앱을 킬때 자동으로 서비스가 시작합니다.</string>
+
+    <string name="credits">제작자</string>
 </resources>

@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="setting_pref" >
-    <CheckBoxPreference
+    <PreferenceCategory android:title="@string/settings_features">
+        <CheckBoxPreference
         android:key="Gps_use"
         android:title="@string/use_gps_title"
         android:summary="@string/use_gps_summary"
         android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_application">
+        <CheckBoxPreference
+            android:key="boot_start"
+            android:title="@string/use_boot_start_title"
+            android:summary="@string/use_boot_start_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="auto_service"
+            android:title="@string/use_auto_service_title"
+            android:summary="@string/use_auto_service_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

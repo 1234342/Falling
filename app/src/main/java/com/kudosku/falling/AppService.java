@@ -39,14 +39,14 @@ public class AppService extends Service {
 
         //mNty.notify(3939, mNoti);
         startForeground(3939, mNoti);
-        Toast.makeText(getApplicationContext(), "서비스를 시작합니다.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
 
         return Service.START_STICKY;
     }
 
     public void onDestroy(){
         stopForeground(true);
-        Toast.makeText(getApplicationContext(), "서비스를 중지합니다.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_stop), Toast.LENGTH_LONG).show();
     }
 
     @Override

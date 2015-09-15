@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Falling</string>
 
+    <string name="app_alive">Falling이 실행되고 있습니다</string>
+    <string name="app_touch">알림을 누르면 앱 화면으로 이동합니다.</string>
+
     <string name="yes">네</string>
     <string name="no">아니요</string>
 

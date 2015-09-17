@@ -18,6 +18,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    Menu mMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +85,22 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.settings, menu);
         getMenuInflater().inflate(R.menu.credits, menu);
+        getMenuInflater().inflate(R.menu.serviceoff, menu);
+        getMenuInflater().inflate(R.menu.serviceon, menu);
+
+        mMenu = menu;
+
+        MenuItem svioff = mMenu.findItem(R.id.serviceoff);
+        MenuItem svion = mMenu.findItem(R.id.serviceon);
+
+        if (isServiceRunning(AppService.class)) {
+            svion.setVisible(false);
+            svioff.setVisible(true);
+        } else if (!isServiceRunning(AppService.class)) {
+            svioff.setVisible(false);
+            svion.setVisible(true);
+        }
+
         return true;
     }
 
@@ -92,10 +110,9 @@ public class MainActivity extends AppCompatActivity {
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
+    Intent svi = new Intent(MainActivity.this, AppService.class);
 
-
-
-         //noinspection SimplifiableIfStatement
+        //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.settings:
                 Intent itn2 = new Intent(MainActivity.this, Setting.class);
@@ -105,9 +122,35 @@ public class MainActivity extends AppCompatActivity {
                 Intent itn3 = new Intent(MainActivity.this, Credits.class);
                 startActivity(itn3);
                 return true;
+            case R.id.serviceoff:
+                stopService(svi);
+                invalidateOptionsMenu();
+                return true;
+            case R.id.serviceon:
+                startService(svi);
+                invalidateOptionsMenu();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem svioff = menu.findItem(R.id.serviceoff);
+        MenuItem svion = menu.findItem(R.id.serviceon);
+
+        if (isServiceRunning(AppService.class)) {
+            svion.setVisible(false);
+            svioff.setVisible(true);
+        } else if (!isServiceRunning(AppService.class)) {
+            svioff.setVisible(false);
+            svion.setVisible(true);
+        }
+
+        return true;
     }
 }

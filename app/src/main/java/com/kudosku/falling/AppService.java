@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -26,11 +27,11 @@ public class AppService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         PendingIntent mPI = PendingIntent.getActivity(
-                getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
+                getApplicationContext(), 0, new Intent(getBaseContext(),MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNoti = new NotificationCompat.Builder(getApplicationContext())
+        mNoti = new NotificationCompat.Builder(getBaseContext())
                 .setContentTitle(getResources().getString(R.string.app_name))
                 .setContentText(getResources().getString(R.string.app_touch))
                 .setSmallIcon(R.drawable.splash)
@@ -59,8 +60,7 @@ public class AppService extends Service {
 
     public void onDestroy(){
 
-        WindowManager windowManager = ((WindowManager) getSystemService(getApplicationContext().WINDOW_SERVICE));
-        //windowManager.removeView(surview);
+        WindowManager windowManager = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
         windowManager.removeView(glSurfaceView);
 
         stopForeground(true);

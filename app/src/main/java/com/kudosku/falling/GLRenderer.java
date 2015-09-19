@@ -11,7 +11,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // Clear Background Testing: Red, If Test is clear, Color is clear (Alpha is 1.0f)
-        GLES20.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        GLES20.glClearColor(0, 0, 0, 0);
+
     }
 
     @Override

@@ -3,21 +3,23 @@ package com.kudosku.falling;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ConfigurationInfo;
+import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.content.Intent;
 import android.widget.Toast;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    static boolean supportsEs2;
     Menu mMenu;
 
     @Override
@@ -25,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
 
-        List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(50);
+        List<ActivityManager.RunningServiceInfo> rs = activityManager.getRunningServices(50);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isAutoOn = sharedPref.getBoolean("auto_service", true);
@@ -35,6 +37,27 @@ public class MainActivity extends AppCompatActivity {
         if (!(isServiceRunning(AppService.class)) && isAutoOn) {
             Intent svi = new Intent(MainActivity.this, AppService.class);
             startService(svi);
+        }
+
+        final ConfigurationInfo configurationInfo =
+                activityManager.getDeviceConfigurationInfo();
+
+        // OpenGL ES 2.0À» Áö¿ø??
+        this.supportsEs2 =
+                configurationInfo.reqGlEsVersion >= 0x20000
+                        || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
+                        && (Build.FINGERPRINT.startsWith("generic")
+                        || Build.FINGERPRINT.startsWith("unknown")
+                        || Build.MODEL.contains("google_sdk")
+                        || Build.MODEL.contains("Emulator")
+                        || Build.MODEL.contains("Android SDK built for x86")));
+        if (supportsEs2) {
+            Toast.makeText(this, getResources().getString(R.string.support_openGL_ES_2_0),
+                    Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.no_support_openGL_ES_2_0),
+                    Toast.LENGTH_LONG).show();
+            return;
         }
 
     }

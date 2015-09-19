@@ -1,31 +1,23 @@
 package com.kudosku.falling;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
+import android.opengl.GLSurfaceView;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.TypedValue;
 import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewOverlay;
 import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class AppService extends Service {
 
     private Notification mNoti;
     SurfaceView surview;
+    private GLSurfaceView glSurfaceView;
     int id;
 
     @Override
@@ -58,18 +50,29 @@ public class AppService extends Service {
                 WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY
                 );
 
-        surview = new Surface(this);
+        //surview = new Surface(this);
+        glSurfaceView = new GLSurfaceView(this);
 
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        wm.addView(surview, params);
+        if (MainActivity.supportsEs2) {
+            // Request an OpenGL ES 2.0 compatible context.
+            glSurfaceView.setEGLContextClientVersion(2);
+
+            // Assign our renderer.
+            glSurfaceView.setRenderer(new GLRenderer());
+        }
+
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        //windowManager.addView(surview, params);
+        windowManager.addView(glSurfaceView, params);
 
         return Service.START_STICKY;
     }
 
     public void onDestroy(){
 
-        WindowManager wm = ((WindowManager) getSystemService(getApplicationContext().WINDOW_SERVICE));
-        wm.removeView(surview);
+        WindowManager windowManager = ((WindowManager) getSystemService(getApplicationContext().WINDOW_SERVICE));
+        //windowManager.removeView(surview);
+        windowManager.removeView(glSurfaceView);
 
         stopForeground(true);
         Toast.makeText(getBaseContext(), getResources().getString(R.string.service_stop), Toast.LENGTH_LONG).show();

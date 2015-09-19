@@ -3,6 +3,7 @@
     package="com.kudosku.falling" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="22"/>
 
@@ -46,8 +47,13 @@
             android:label="@string/credits" >
         </activity>
 
+        <activity
+            android:name="AppView"
+            android:label="appview" >
+        </activity>
+
         <service android:name=".AppService"
-            android:process=":remote">
+            android:process=":remote" android:permission="android.permission.SYSTEM_ALERT_WINDOW" >
         </service>
 
     </application>

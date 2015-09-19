@@ -86,4 +86,4 @@
 ---
 
 * **이 프로젝트를 강제로 수정하거나 이용하지 마세요.**
-* **Do not modify or use the project to the force.**
+* **Do not modify or use this project.**

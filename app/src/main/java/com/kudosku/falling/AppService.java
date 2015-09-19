@@ -16,7 +16,6 @@ import android.widget.Toast;
 public class AppService extends Service {
 
     private Notification mNoti;
-    SurfaceView surview;
     private GLSurfaceView glSurfaceView;
     int id;
 
@@ -50,19 +49,9 @@ public class AppService extends Service {
                 WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY
                 );
 
-        //surview = new Surface(this);
-        glSurfaceView = new GLSurfaceView(this);
-
-        if (MainActivity.supportsEs2) {
-            // Request an OpenGL ES 2.0 compatible context.
-            glSurfaceView.setEGLContextClientVersion(2);
-
-            // Assign our renderer.
-            glSurfaceView.setRenderer(new GLRenderer());
-        }
+        glSurfaceView = new com.kudosku.falling.GLSurfaceView(this);
 
         WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        //windowManager.addView(surview, params);
         windowManager.addView(glSurfaceView, params);
 
         return Service.START_STICKY;

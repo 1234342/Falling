@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         final ConfigurationInfo configurationInfo =
                 activityManager.getDeviceConfigurationInfo();
 
-        // OpenGL ES 2.0À» Áö¿ø??
         this.supportsEs2 =
                 configurationInfo.reqGlEsVersion >= 0x20000
                         || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1

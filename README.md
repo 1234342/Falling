@@ -2,6 +2,8 @@
 
 ### 당신의 기기의 상태와 지금 날씨를 시각적인 요소를 사용하여 당신의 기기를 외부의 상태와 동기화를 시켜 당신에게 정보를 전달하고, 기기를 꾸며줍니다.
 
+### This is Korean App Project 'Falling'
+
 ### 참여 인원
 
 * 유아(YuahP)
@@ -84,3 +86,4 @@
 ---
 
 * **이 프로젝트를 강제로 수정하거나 이용하지 마세요.**
+* **Do not modify or use the project to the force.**

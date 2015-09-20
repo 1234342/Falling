@@ -27,7 +27,4 @@
     <string name="select_refresh_time_summary">Refresh the weather data in accordance with the prescribed period.</string>
 
     <string name="credits">Credits</string>
-
-    <string name="no_support_openGL_ES_2.0">This device does not support OpenGL ES 2.0.</string>
-    <string name="support_openGL_ES_2.0">This device support OpenGL ES 2.0.</string>
 </resources>

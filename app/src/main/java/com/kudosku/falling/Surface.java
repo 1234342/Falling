@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
@@ -34,9 +35,11 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     private Random random;
     private Paint paint;
     private int ranx,ranx2,ranx3 = 0;
-
+    private int centerX,centerY;
+    private int ro = 0;
     private int x,y = 0;
     private int sx,sy;
+    Matrix matrix = new Matrix();
 
     public Surface(Context context) {
         super(context);
@@ -103,11 +106,15 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                         ranx3 = (int)(Math.random() * dvcw + 1);
                     }
 
-                    for(int i=0 ; i < 5 ; i++) {
-                        doDraw(canvas, y);
-                        doText(canvas, y);
-                    }
+                    doDraw(canvas, y);
+                    doText(canvas, y);
+
                     y++;
+                    ro++;
+
+                    if (ro>= 360) {
+                        ro = 0;
+                    }
 
                     if (y >= dvch +20 ) {
                         y = 0;
@@ -139,9 +146,16 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     }
 
     public void doDraw(Canvas c, int y){
+        //matrix.reset();
+        //centerX=(2*ranx)/2;
+        //centerY=(2*y)/2;
+        //matrix.postRotate(ro, ranx / 3, 0);
+        c.rotate(ro);
         c.drawBitmap(img, ranx, y, null);
-        c.drawBitmap(img, ranx2, y, null);
-        c.drawBitmap(img, ranx3, y, null);
-        c.drawBitmap(img, (int)(Math.random() * dvcw + 1), y, null);
+
+
+        //c.drawBitmap(img, ranx2, y, null);
+        //c.drawBitmap(img, ranx3, y, null);
+        //c.drawBitmap(img, (int)(Math.random() * dvcw + 1), y, null);
     }
 }

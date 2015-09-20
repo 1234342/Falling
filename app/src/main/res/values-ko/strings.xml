@@ -27,7 +27,4 @@
     <string name="select_refresh_time_summary">정해진 주기에 따라 날씨 데이터를 새로고침합니다.</string>
 
     <string name="credits">제작자</string>
-
-    <string name="no_support_openGL_ES_2.0">이 기기는 OpenGL ES 2.0을 지원하지 않습니다.</string>
-    <string name="nsupport_openGL_ES_2.0">이 기기는 OpenGL ES 2.0을 지원합니다.</string>
 </resources>

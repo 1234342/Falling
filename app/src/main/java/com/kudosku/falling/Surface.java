@@ -146,11 +146,10 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     }
 
     public void doDraw(Canvas c, int y){
-        //matrix.reset();
-        //centerX=(2*ranx)/2;
-        //centerY=(2*y)/2;
-        //matrix.postRotate(ro, ranx / 3, 0);
-        c.rotate(ro);
+        matrix.reset();
+        centerX=(2*ranx)/2;
+        centerY=(2*y)/2;
+        matrix.postRotate(ro, ranx / 3, 0);
         c.drawBitmap(img, ranx, y, null);
 
 

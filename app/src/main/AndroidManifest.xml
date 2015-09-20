@@ -4,7 +4,10 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.internet"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="22"/>
 
@@ -46,11 +49,6 @@
         <activity
             android:name="Credits"
             android:label="@string/credits" >
-        </activity>
-
-        <activity
-            android:name="AppView"
-            android:label="appview" >
         </activity>
 
         <service android:name=".AppService"

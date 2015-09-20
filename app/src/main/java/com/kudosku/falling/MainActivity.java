@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
             Intent svi = new Intent(MainActivity.this, AppService.class);
             startService(svi);
         }
-
     }
 
     public boolean isServiceRunning (Class<?> serviceclass) {

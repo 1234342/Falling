@@ -9,12 +9,20 @@
             android:defaultValue="true" />
 
         <ListPreference
-            android:key="refresh"
-            android:title="@string/select_refresh_time_title"
-            android:summary="@string/select_refresh_time_summary"
+            android:key="location"
+            android:title="@string/select_refresh_time_location_title"
+            android:summary="@string/select_refresh_time_location_summary"
+            android:defaultValue="2"
+            android:entries="@array/refresh_location_times"
+            android:entryValues="@array/refresh_location_values" />
+
+        <ListPreference
+            android:key="weather"
+            android:title="@string/select_refresh_time_weather_title"
+            android:summary="@string/select_refresh_time_weather_summary"
             android:defaultValue="0"
-            android:entries="@array/refresh_times"
-            android:entryValues="@array/refresh_time_values" />
+            android:entries="@array/refresh_weather_times"
+            android:entryValues="@array/refresh_weather_values" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_application">

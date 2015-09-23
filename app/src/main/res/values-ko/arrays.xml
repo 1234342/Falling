@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="refresh_times">
+    <string-array name="refresh_weather_times">
         <item>30 분</item>
         <item>1 시간</item>
         <item>2 시간</item>
@@ -15,5 +15,12 @@
         <item>11 시간</item>
         <item>12 시간</item>
         <item>1 일</item>
+    </string-array>
+    <string-array name="refresh_location_times">
+        <item>1 분</item>
+        <item>10 분</item>
+        <item>15 분(추천)</item>
+        <item>30 분</item>
+        <item>1 시간(비추천)</item>
     </string-array>
 </resources>

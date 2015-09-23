@@ -18,9 +18,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
@@ -36,18 +34,18 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     private int dvch,dvcw;
     private Random random;
     private Paint paint;
-    private int ranx = 0;
+    private int ranx,ranx2,ranx3 = 0;
+    private int centerX,centerY;
     private int ro = 0;
     private int x,y = 0;
     private int sx,sy;
     Matrix matrix = new Matrix();
-    private List<SurfaceInit> list = new ArrayList<SurfaceInit>();
 
     public Surface(Context context) {
         super(context);
         context_ = context;
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        img = BitmapFactory.decodeResource(getResources(), R.drawable.snow);
+        img = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
         img2 = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
         dvch = display.getHeight();
         dvcw = display.getWidth();
@@ -102,28 +100,31 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                 synchronized (holder) {
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                    for(int i=0; i<list.size(); i++) {
-                            SurfaceInit Init = list.get(i);
-                            matrix.reset();
-                            matrix.postRotate(ro, img.getWidth() / 2, img.getHeight() / 2);
-                            matrix.postTranslate(Init.x, Init.y);
-                            canvas.drawBitmap(img, matrix, null);
+                    if (ranx == 0 || ranx2 == 0) {
+                        ranx = (int)(Math.random() * dvcw + 1);
+                        ranx2 = (int)(Math.random() * dvcw + 1);
+                        ranx3 = (int)(Math.random() * dvcw + 1);
                     }
 
-                    canvas.drawText("개수:" + list.size(), 100, 200, paint);
+                    doDraw(canvas, y);
+                    doText(canvas, y);
 
-                    make();
-                    move();
-
+                    y++;
                     ro++;
 
-                    if (ro >= 360) {
+                    if (ro>= 360) {
                         ro = 0;
+                    }
+
+                    if (y >= dvch +20 ) {
+                        y = 0;
+                        ranx = (int)(Math.random() * dvcw + 1);
+                        ranx2 = (int)(Math.random() * dvcw + 1);
+                        ranx3 = (int)(Math.random() * dvcw + 1);
                     }
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
             } finally {
                 if (canvas != null) {
                     holder.unlockCanvasAndPost(canvas);
@@ -132,37 +133,28 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         }
     }
 
-    /*public void doDraw(Canvas c, int y){
-        c.drawBitmap(img, matrix, null);
+    public void doMove(){
+        ranx = (int)(Math.random() * dvcw + 1);
+
+    }
+
+    public void doText(Canvas c, int y){
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(10);
+        paint.setTextSize(75);
+        c.drawText("뭘 보는가 닝겐?", ranx, y, paint);
+    }
+
+    public void doDraw(Canvas c, int y){
+        matrix.reset();
+        centerX=(2*ranx)/2;
+        centerY=(2*y)/2;
+        matrix.postRotate(ro, ranx / 3, 0);
+        c.drawBitmap(img, ranx, y, null);
 
 
         //c.drawBitmap(img, ranx2, y, null);
         //c.drawBitmap(img, ranx3, y, null);
         //c.drawBitmap(img, (int)(Math.random() * dvcw + 1), y, null);
-    }*/
-
-    public void make() {
-        int x = (int)(Math.random() * dvcw + 1);
-        int y = -30;
-        int speedX = (int)(Math.random() * 20 + 1);
-        int speedY = (int)(Math.random() * 20 + 1);
-
-        SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY);
-
-        if (list.size() <= 20) {
-            list.add(Init);
-        }
     }
-
-    public void move() {
-        for(SurfaceInit Init : list) {
-            //Init.x += Init.speedX;
-            Init.y += Init.speedY;
-
-            if(Init.y >= dvch +20 ) {
-                Init.y = 0;
-            }
-        }
-    }
-
 }

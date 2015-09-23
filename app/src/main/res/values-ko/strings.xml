@@ -1,11 +1,5 @@
 <resources>
     <string name="app_name">Falling</string>
-    <string name="app_lang">Korean</string>
-
-    <string name="cloud">구름많음</string>
-    <string name="clear">맑음</string>
-    <string name="haze">연무</string>
-    <string name="mist">박무</string>
 
     <string name="app_alive">Falling이 실행되고 있습니다</string>
     <string name="app_touch">알림을 누르면 앱 화면으로 이동합니다.</string>
@@ -24,18 +18,13 @@
 
     <string name="use_gps_title">GPS 사용</string>
     <string name="use_gps_summary">GPS로 정확한 거리를 측정합니다.</string>
-    <string name="battery_usage_title">베터리 사용률</string>
-    <string name="battery_usage_summary">베터리를 더 사용하거나 덜 사용합니다.</string>
-
     <string name="use_boot_start_title">부팅시 앱 실행</string>
     <string name="use_boot_start_summary">디바이스를 킬때마다 앱이 자동으로 켜집니다.</string>
     <string name="use_auto_service_title">자동 서비스 실행</string>
     <string name="use_auto_service_summary">앱을 킬때 자동으로 서비스가 시작합니다.</string>
 
-    <string name="select_refresh_time_weather_title">날씨 데이터 새로고침 주기</string>
-    <string name="select_refresh_time_weather_summary">정해진 주기에 따라 날씨 데이터를 새로고침합니다.</string>
-    <string name="select_refresh_time_location_title">위치 데이터 새로고침 주기</string>
-    <string name="select_refresh_time_location_summary">정해진 주기에 따라 위치 데이터를 새로고침합니다.</string>
+    <string name="select_refresh_time_title">날씨 데이터 새로고침 주기</string>
+    <string name="select_refresh_time_summary">정해진 주기에 따라 날씨 데이터를 새로고침합니다.</string>
 
     <string name="credits">제작자</string>
 </resources>

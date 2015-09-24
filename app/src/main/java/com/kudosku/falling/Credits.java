@@ -21,7 +21,7 @@ public class Credits extends AppCompatActivity {
         setContentView(R.layout.credits);
 
         credits.add("Programming : YuahP");
-        credits.add("Programming : KDPark");
+        credits.add("Designing : KDPark");
 
         ArrayAdapter adapter= new ArrayAdapter(Credits.this, android.R.layout.simple_list_item_1, credits);
 

@@ -24,8 +24,6 @@
 
     <string name="use_gps_title">GPS 사용</string>
     <string name="use_gps_summary">GPS로 정확한 거리를 측정합니다.</string>
-    <string name="battery_usage_title">베터리 사용률</string>
-    <string name="battery_usage_summary">베터리를 더 사용하거나 덜 사용합니다.</string>
 
     <string name="use_boot_start_title">부팅시 앱 실행</string>
     <string name="use_boot_start_summary">디바이스를 킬때마다 앱이 자동으로 켜집니다.</string>

@@ -149,7 +149,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
 
         SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY);
 
-        if (list.size() <= 20) {
+        if (list.size() <= AppService.temp) {
             list.add(Init);
         }
     }
@@ -160,6 +160,8 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
             Init.y += Init.speedY;
 
             if(Init.y >= dvch +20 ) {
+                Init.x = (int)(Math.random() * dvcw + 1);
+                Init.speedY = (int)(Math.random() * 20 + 1);
                 Init.y = 0;
             }
         }

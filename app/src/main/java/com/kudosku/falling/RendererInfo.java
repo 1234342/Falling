@@ -16,12 +16,6 @@ public class RendererInfo {
     public void setType(int rendererType) {
         m_rendererType = rendererType;
     }
-    public void setType(Context context) {
-        if (hasES20(context))
-            m_rendererType = RendererType.OPENGLES_20;
-        m_rendererType = RendererType.ANDROIDSURFACE;
-        // m_rendererType = RendererType.OPENGLES_10;
-    }
 
     public int getType() {
        return m_rendererType;
@@ -35,7 +29,7 @@ public class RendererInfo {
             case 2 : // RendererType.OPENGLES_20
                 return "OpenGL ES 2.0";
             default :
-                return  "Not Definded Type";
+                return "Not Definded Type";
         }
     }
 

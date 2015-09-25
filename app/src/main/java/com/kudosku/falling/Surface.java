@@ -1,5 +1,6 @@
 package com.kudosku.falling;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.os.Handler;
+import android.test.RenamingDelegatingContext;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -17,14 +20,12 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
     private SurfaceHolder holder;
-    private Bitmap snow16;
-    private Bitmap snow8;
-    private Bitmap snow2_16;
-    private Bitmap snow2_8;
+    private Bitmap img;
     private Bitmap img2;
     private Thread thread;
     int width,height;
@@ -46,10 +47,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         super(context);
         context_ = context;
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        snow16 = BitmapFactory.decodeResource(getResources(), R.drawable.snow_16);
-        snow8 = BitmapFactory.decodeResource(getResources(), R.drawable.snow_8);
-        snow2_16 = BitmapFactory.decodeResource(getResources(), R.drawable.snow_2_16);
-        snow2_8 = BitmapFactory.decodeResource(getResources(), R.drawable.snow_2_8);
+        img = BitmapFactory.decodeResource(getResources(), R.drawable.snow);
         img2 = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
         dvch = display.getHeight();
         dvcw = display.getWidth();
@@ -104,35 +102,12 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                 synchronized (holder) {
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                    int i;
-
-                    for(i = 0; i < list.size() / 6; i++) {
-                        SurfaceInit Init = list.get(i);
-                        matrix.reset();
-                        matrix.postRotate(ro, snow16.getWidth() / 2, snow16.getHeight() / 2);
-                        matrix.postTranslate(Init.x, Init.y);
-                        canvas.drawBitmap(snow16, matrix, null);
-                    }
-                    for(; i < list.size() / 6 * 3; i++) {
-                        SurfaceInit Init = list.get(i);
-                        matrix.reset();
-                        matrix.postRotate(ro, snow8.getWidth() / 2, snow8.getHeight() / 2);
-                        matrix.postTranslate(Init.x, Init.y);
-                        canvas.drawBitmap(snow8, matrix, null);
-                    }
-                    for(; i < list.size() / 6 * 4; i++) {
-                        SurfaceInit Init = list.get(i);
-                        matrix.reset();
-                        matrix.postRotate(ro, snow2_16.getWidth() / 2, snow2_16.getHeight() / 2);
-                        matrix.postTranslate(Init.x, Init.y);
-                        canvas.drawBitmap(snow2_16, matrix, null);
-                    }
-                    for(; i < list.size(); i++) {
-                        SurfaceInit Init = list.get(i);
-                        matrix.reset();
-                        matrix.postRotate(ro, snow2_8.getWidth() / 2, snow2_8.getHeight() / 2);
-                        matrix.postTranslate(Init.x, Init.y);
-                        canvas.drawBitmap(snow2_8, matrix, null);
+                    for(int i=0; i<list.size(); i++) {
+                            SurfaceInit Init = list.get(i);
+                            matrix.reset();
+                            matrix.postRotate(ro, img.getWidth() / 2, img.getHeight() / 2);
+                            matrix.postTranslate(Init.x, Init.y);
+                            canvas.drawBitmap(img, matrix, null);
                     }
 
                     canvas.drawText("개수:" + list.size(), 100, 200, paint);

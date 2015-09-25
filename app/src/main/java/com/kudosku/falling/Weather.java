@@ -23,38 +23,30 @@ public class Weather {
 
         try {
 
-            // call API by using HTTPURLConnection
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-//            urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
 
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             JSONObject json = new JSONObject(getStringFromInputStream(in));
 
-            // parse JSON
             w = parseJSON(json);
             w.setIon(lon);
             w.setLat(lat);
 
         }catch(MalformedURLException e){
-            System.err.println("Malformed URL");
             e.printStackTrace();
             return null;
 
         }catch(JSONException e) {
-            System.err.println("JSON parsing error");
             e.printStackTrace();
             return null;
 
         }catch(IOException e){
-            System.err.println("URL Connection failed");
             e.printStackTrace();
             return null;
 
         }
 
-        // set Weather Object
         return w;
 
     }
@@ -69,11 +61,15 @@ public class Weather {
         w.setWeather(json.getJSONArray("weather").getJSONObject(0).getString("main"));
         w.setCity(json.getString("name"));
         w.setCloudy(json.getJSONObject("clouds").getString("all"));
+        if (json.has("snow")) {
+            w.setSnow(json.getJSONArray("snow").getJSONObject(0).getString("3h"));
+        }
+        if (json.has("rain")) {
+            w.setRain(json.getJSONArray("rain").getJSONObject(0).getString("3h"));
+        }
         return w;
 
     }
-
-
 
 
     private static String getStringFromInputStream(InputStream is) {

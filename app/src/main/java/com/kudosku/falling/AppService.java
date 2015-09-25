@@ -1,6 +1,5 @@
 package com.kudosku.falling;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,20 +11,16 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
-
-import static com.kudosku.falling.RendererInfo.*;
 
 public class AppService extends Service {
 
@@ -49,17 +44,11 @@ public class AppService extends Service {
     int timerdelay_location = 0;
     TimerTask timertask;
 
-    Device m_device;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        m_device = new Device(this);
-        m_device.setRendererType(RendererType.ANDROIDSURFACE);
-        // m_device.getRendererType();
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), this.MODE_PRIVATE);
@@ -154,7 +143,7 @@ public class AppService extends Service {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, timerdelay_location * 1000, 250, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
 
-        if ((isGPSAlive && isGPSuse) || isNETAlive) {
+        if (isGPSAlive && isGPSuse) {
             lat = String.valueOf(lastKnownLocation.getLatitude());
             lon = String.valueOf(lastKnownLocation.getLongitude());
 
@@ -204,7 +193,7 @@ public class AppService extends Service {
                 e.printStackTrace();
             }
 
-        } /*else if (isNETAlive) {
+        } else if (isNETAlive) {
             lat = String.valueOf(lastKnownLocation.getLatitude());
             lon = String.valueOf(lastKnownLocation.getLongitude());
 
@@ -253,51 +242,21 @@ public class AppService extends Service {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-        }*/ else if (!isNETAlive && !isGPSAlive) {
+        } else if (!isNETAlive && !isGPSAlive) {
             Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
             stopSelf();
         }
         if (Objects.equals(Timerpref_weather, "0")) {
-            timerdelay_weather = 60 * 30; // sec X minute
+            timerdelay_weather = 60 * 10;
         }
         if (Objects.equals(Timerpref_weather, "1")) {
-            timerdelay_weather = 60 * 60;
+            timerdelay_weather = 60 * 15; // sec X minute
         }
         if (Objects.equals(Timerpref_weather, "2")) {
-            timerdelay_weather = 60 * 60 * 2; // sec X minute X hour
+            timerdelay_weather = 60 * 30;
         }
         if (Objects.equals(Timerpref_weather, "3")) {
-            timerdelay_weather = 60 * 60 * 3;
-        }
-        if (Objects.equals(Timerpref_weather, "4")) {
-            timerdelay_weather = 60 * 60 * 4;
-        }
-        if (Objects.equals(Timerpref_weather, "5")) {
-            timerdelay_weather = 60 * 60 * 5;
-        }
-        if (Objects.equals(Timerpref_weather, "6")) {
-            timerdelay_weather = 60 * 60 * 6;
-        }
-        if (Objects.equals(Timerpref_weather, "7")) {
-            timerdelay_weather = 60 * 60 * 7;
-        }
-        if (Objects.equals(Timerpref_weather, "8")) {
-            timerdelay_weather = 60 * 60 * 8;
-        }
-        if (Objects.equals(Timerpref_weather, "9")) {
-            timerdelay_weather = 60 * 60 * 9;
-        }
-        if (Objects.equals(Timerpref_weather, "10")) {
-            timerdelay_weather = 60 * 60 * 10;
-        }
-        if (Objects.equals(Timerpref_weather, "12")) {
-            timerdelay_weather = 60 * 60 * 11;
-        }
-        if (Objects.equals(Timerpref_weather, "13")) {
-            timerdelay_weather = 60 * 60 * 12;
-        }
-        if (Objects.equals(Timerpref_weather, "14")) {
-            timerdelay_weather = 60 * 60 * 24;
+            timerdelay_weather = 60 * 60;
         }
 
         timertask = new TimerTask() {
@@ -362,7 +321,6 @@ public class AppService extends Service {
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void notify(WeatherInit w, String weather) {
         if (Objects.equals(weather, "Haze")) {
             System.out.println("상태: " + getString(R.string.haze) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +

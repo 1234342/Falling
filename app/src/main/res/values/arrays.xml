@@ -1,37 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="refresh_weather_times">
+        <item>10 Minutes</item>
+        <item>15 Minutes</item>
         <item>30 Minutes</item>
         <item>1 Hour</item>
-        <item>2 Hours</item>
-        <item>3 Hours</item>
-        <item>4 Hours</item>
-        <item>5 Hours</item>
-        <item>6 Hours</item>
-        <item>7 Hours</item>
-        <item>8 Hours</item>
-        <item>9 Hours</item>
-        <item>10 Hours</item>
-        <item>11 Hours</item>
-        <item>12 Hours</item>
-        <item>1 Day</item>
     </string-array>
     <string-array name="refresh_weather_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
     </string-array>
     <string-array name="refresh_location_times">
         <item>1 Minute</item>

@@ -16,11 +16,7 @@ public class WeatherTask extends AsyncTask<String, Void, WeatherInit> {
         String lat = params[0];
         String lon = params[1];
 
-        // API 호출
         WeatherInit w = client.getWeather(lat, lon);
-
-        //System.out.println("Weather : "+w.getTemprature());
-        // 작업 후 리
 
         return w;
 

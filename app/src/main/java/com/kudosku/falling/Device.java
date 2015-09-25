@@ -13,7 +13,7 @@ public class Device {
     }
 
     public void setRendererType() {
-        if (m_rendererInfo.hasES20(context))
+        if (m_rendererInfo.hasES20(m_context))
             m_rendererInfo.setType(RendererInfo.RendererType.OPENGLES_20);
         m_rendererInfo.setType(RendererInfo.RendererType.ANDROIDSURFACE);
         // m_rendererInfo.setType(RendererInfo.RendererType.OPENGLES_10);

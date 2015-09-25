@@ -12,14 +12,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 public class AppService extends Service {
@@ -44,9 +45,12 @@ public class AppService extends Service {
     int timerdelay_location = 0;
     TimerTask timertask;
 
+    Device m_device;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        m_device = new Device(this);
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {

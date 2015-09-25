@@ -1,5 +1,6 @@
 package com.kudosku.falling;
 
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -57,6 +59,7 @@ public class AppService extends Service {
         // m_device.getRendererType();
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), this.MODE_PRIVATE);
@@ -151,7 +154,7 @@ public class AppService extends Service {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, timerdelay_location * 1000, 250, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
 
-        if (isGPSAlive && isGPSuse) {
+        if ((isGPSAlive && isGPSuse) || isNETAlive) {
             lat = String.valueOf(lastKnownLocation.getLatitude());
             lon = String.valueOf(lastKnownLocation.getLongitude());
 
@@ -201,7 +204,7 @@ public class AppService extends Service {
                 e.printStackTrace();
             }
 
-        } else if (isNETAlive) {
+        } /*else if (isNETAlive) {
             lat = String.valueOf(lastKnownLocation.getLatitude());
             lon = String.valueOf(lastKnownLocation.getLongitude());
 
@@ -250,7 +253,7 @@ public class AppService extends Service {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-        } else if (!isNETAlive && !isGPSAlive) {
+        }*/ else if (!isNETAlive && !isGPSAlive) {
             Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
             stopSelf();
         }
@@ -359,6 +362,7 @@ public class AppService extends Service {
         return false;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void notify(WeatherInit w, String weather) {
         if (Objects.equals(weather, "Haze")) {
             System.out.println("상태: " + getString(R.string.haze) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +

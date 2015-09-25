@@ -8,7 +8,7 @@ public class RendererInfo {
 
     private int m_rendererType;
 
-    static public class RendererType {
+    public static class RendererType {
         static int ANDROIDSURFACE = 0;
         static int OPENGLES_10 = 1;
         static int OPENGLES_20 = 2;
@@ -34,7 +34,7 @@ public class RendererInfo {
         }
     }
 
-    static public boolean isProbablyEmulator() {
+    public static boolean isProbablyEmulator() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
                 && (Build.FINGERPRINT.startsWith("generic")
                 || Build.FINGERPRINT.startsWith("unknown")

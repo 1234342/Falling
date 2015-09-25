@@ -2,6 +2,7 @@ package com.kudosku.falling;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
 
 public class RendererInfo {
 
@@ -33,9 +34,19 @@ public class RendererInfo {
         }
     }
 
-    public boolean hasES20(Context context) {
+    static public boolean isProbablyEmulator() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
+                && (Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86"));
+    }
+
+    public boolean supportsEs2(Context context) {
         return ((ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE)).
                 getDeviceConfigurationInfo().
-                reqGlEsVersion >= 0x20000;
+                reqGlEsVersion >= 0x20000 || isProbablyEmulator();
     }
+
 }

@@ -23,6 +23,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import static com.kudosku.falling.RendererInfo.*;
+
 public class AppService extends Service {
 
     private Notification mNoti;
@@ -51,6 +53,8 @@ public class AppService extends Service {
     public void onCreate() {
         super.onCreate();
         m_device = new Device(this);
+        m_device.setRendererType(RendererType.ANDROIDSURFACE);
+        // m_device.getRendererType();
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {

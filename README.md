@@ -6,6 +6,8 @@ This is Korean App Project 'Falling'
 
 ## 기획
 
+---
+
 ### 참여 인원
 
 * 유아(YuahP)

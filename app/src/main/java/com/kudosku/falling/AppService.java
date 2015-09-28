@@ -43,6 +43,8 @@ public class AppService extends Service {
     int timerdelay_weather = 0;
     int timerdelay_location = 0;
     TimerTask timertask;
+    static WeatherTask t;
+    static WeatherInit w;
 
     @Override
     public void onCreate() {
@@ -80,16 +82,14 @@ public class AppService extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 if (isGPSAlive && isGPSuse) {
-                    lat = String.valueOf(lastKnownLocation.getLatitude());
-                    lon = String.valueOf(lastKnownLocation.getLongitude());
+                    int lat = (int) lastKnownLocation.getLatitude();
+                    int lon = (int) lastKnownLocation.getLongitude();
 
-                    WeatherTask t = new WeatherTask();
+                    t = new WeatherTask();
 
                     try {
 
-                        WeatherInit w = t.execute(lat,lon).get();
-
-                        String weather = w.getWeather();
+                        w = t.execute(lat,lon).get();
 
                         temp = (int) Math.round(w.getTemprature() - 273.15);
 
@@ -100,16 +100,14 @@ public class AppService extends Service {
                     }
 
                 } else if (isNETAlive) {
-                    String lat = String.valueOf(lastKnownLocation.getLatitude());
-                    String lon = String.valueOf(lastKnownLocation.getLongitude());
+                    int lat = (int) lastKnownLocation.getLatitude();
+                    int lon = (int) lastKnownLocation.getLongitude();
 
-                    WeatherTask t = new WeatherTask();
+                    t = new WeatherTask();
 
                     try {
 
-                        WeatherInit w = t.execute(lat,lon).get();
-
-                        String weather = w.getWeather();
+                        w = t.execute(lat,lon).get();
 
                         temp = (int) Math.round(w.getTemprature() - 273.15);
 
@@ -144,14 +142,14 @@ public class AppService extends Service {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
 
         if (isGPSAlive && isGPSuse) {
-            lat = String.valueOf(lastKnownLocation.getLatitude());
-            lon = String.valueOf(lastKnownLocation.getLongitude());
+            int lat = (int) lastKnownLocation.getLatitude();
+            int lon = (int) lastKnownLocation.getLongitude();
 
-            WeatherTask t = new WeatherTask();
+            t = new WeatherTask();
 
             try {
 
-                WeatherInit w = t.execute(lat,lon).get();
+                w = t.execute(lat,lon).get();
 
                 PendingIntent mPI = PendingIntent.getActivity(
                         getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
@@ -182,8 +180,6 @@ public class AppService extends Service {
 
                 WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 wm.addView(surview, params2);
-
-                String weather = w.getWeather();
 
                 temp = (int) Math.round(w.getTemprature() - 273.15);
 
@@ -194,14 +190,14 @@ public class AppService extends Service {
             }
 
         } else if (isNETAlive) {
-            lat = String.valueOf(lastKnownLocation.getLatitude());
-            lon = String.valueOf(lastKnownLocation.getLongitude());
+            int lat = (int) lastKnownLocation.getLatitude();
+            int lon = (int) lastKnownLocation.getLongitude();
 
-            WeatherTask t = new WeatherTask();
+            t = new WeatherTask();
 
             try {
 
-                WeatherInit w = t.execute(lat,lon).get();
+                w = t.execute(lat,lon).get();
 
                 PendingIntent mPI = PendingIntent.getActivity(
                         getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
@@ -232,8 +228,6 @@ public class AppService extends Service {
 
                 WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 wm.addView(surview, params2);
-
-                String weather = w.getWeather();
 
                 temp = (int) Math.round(w.getTemprature() - 273.15);
 
@@ -263,8 +257,8 @@ public class AppService extends Service {
 
             @Override
             public void run() {
-                lat = String.valueOf(lastKnownLocation.getLatitude());
-                lon = String.valueOf(lastKnownLocation.getLongitude());
+                int lat = (int) lastKnownLocation.getLatitude();
+                int lon = (int) lastKnownLocation.getLongitude();
 
                 WeatherTask t = new WeatherTask();
 

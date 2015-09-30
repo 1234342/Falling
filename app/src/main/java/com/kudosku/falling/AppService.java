@@ -1,5 +1,6 @@
 package com.kudosku.falling;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,7 +16,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -53,7 +57,13 @@ public class AppService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), this.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), MODE_PRIVATE);
+        SharedPreferences sharedPref_ = this.getSharedPreferences(getDefaultSharedPreferencesName(this), MODE_ENABLE_WRITE_AHEAD_LOGGING);
+
+        SharedPreferences.Editor editer = sharedPref_.edit();
+
+        editer.putBoolean("sviStat", true);
+        editer.commit();
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -84,37 +94,38 @@ public class AppService extends Service {
                 if (isGPSAlive && isGPSuse) {
                     int lat = (int) lastKnownLocation.getLatitude();
                     int lon = (int) lastKnownLocation.getLongitude();
+                    if (lat != 0 && lon != 0) {
+                        t = new WeatherTask();
 
-                    t = new WeatherTask();
+                        try {
 
-                    try {
+                            w = t.execute(lat,lon).get();
 
-                        w = t.execute(lat,lon).get();
+                            temp = (int) Math.round(w.getTemprature() - 273.15);
 
-                        temp = (int) Math.round(w.getTemprature() - 273.15);
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
-
                 } else if (isNETAlive) {
                     int lat = (int) lastKnownLocation.getLatitude();
                     int lon = (int) lastKnownLocation.getLongitude();
+                    if (lat != 0 && lon != 0) {
+                        t = new WeatherTask();
 
-                    t = new WeatherTask();
+                        try {
 
-                    try {
+                            w = t.execute(lat, lon).get();
 
-                        w = t.execute(lat,lon).get();
+                            temp = (int) Math.round(w.getTemprature() - 273.15);
 
-                        temp = (int) Math.round(w.getTemprature() - 273.15);
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else if (!isNETAlive && !isGPSAlive) {
                     Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
@@ -145,97 +156,103 @@ public class AppService extends Service {
             int lat = (int) lastKnownLocation.getLatitude();
             int lon = (int) lastKnownLocation.getLongitude();
 
-            t = new WeatherTask();
+            if (lat != 0 && lon != 0) {
+                t = new WeatherTask();
 
-            try {
+                try {
+                    w = t.execute(lat, lon).get();
+                    temp = (int) Math.round(w.getTemprature() - 273.15);
 
-                w = t.execute(lat,lon).get();
-
-                PendingIntent mPI = PendingIntent.getActivity(
-                        getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNoti = new NotificationCompat.Builder(getApplicationContext())
-                        .setContentTitle(getResources().getString(R.string.app_name))
-                        .setContentText(getResources().getString(R.string.app_touch))
-                        .setSmallIcon(R.drawable.splash)
-                        .setTicker(getResources().getString(R.string.app_alive))
-                        .setWhen(System.currentTimeMillis())
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setAutoCancel(false)
-                        .setContentIntent(mPI)
-                        .build();
-
-                //mNty.notify(3939, mNoti);
-                startForeground(3939, mNoti);
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
-
-                WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                );
-
-                surview = new Surface(this);
-
-                WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-                wm.addView(surview, params2);
-
-                temp = (int) Math.round(w.getTemprature() - 273.15);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "잠시후에 다시 시도해 주세요.", Toast.LENGTH_LONG).show();
+                stopSelf();
             }
+            PendingIntent mPI = PendingIntent.getActivity(
+                    getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNoti = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle(getResources().getString(R.string.app_name))
+                    .setContentText(getResources().getString(R.string.app_touch))
+                    .setSmallIcon(R.drawable.splash)
+                    .setTicker(getResources().getString(R.string.app_alive))
+                    .setWhen(System.currentTimeMillis())
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setAutoCancel(false)
+                    .setContentIntent(mPI)
+                    .build();
+
+            //mNty.notify(3939, mNoti);
+            startForeground(3939, mNoti);
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
+
+            WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+            );
+
+            surview = new Surface(this);
+
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            wm.addView(surview, params2);
 
         } else if (isNETAlive) {
             int lat = (int) lastKnownLocation.getLatitude();
             int lon = (int) lastKnownLocation.getLongitude();
 
-            t = new WeatherTask();
+            if (lat != 0 && lon != 0) {
+                t = new WeatherTask();
 
-            try {
+                try {
+                    w = t.execute(lat, lon).get();
+                    temp = (int) Math.round(w.getTemprature() - 273.15);
 
-                w = t.execute(lat,lon).get();
-
-                PendingIntent mPI = PendingIntent.getActivity(
-                        getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNoti = new NotificationCompat.Builder(getApplicationContext())
-                        .setContentTitle(getResources().getString(R.string.app_name))
-                        .setContentText(getResources().getString(R.string.app_touch))
-                        .setSmallIcon(R.drawable.splash)
-                        .setTicker(getResources().getString(R.string.app_alive))
-                        .setWhen(System.currentTimeMillis())
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setAutoCancel(false)
-                        .setContentIntent(mPI)
-                        .build();
-
-                //mNty.notify(3939, mNoti);
-                startForeground(3939, mNoti);
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
-
-                WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                );
-
-                surview = new Surface(this);
-
-                WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-                wm.addView(surview, params2);
-
-                temp = (int) Math.round(w.getTemprature() - 273.15);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "잠시후에 다시 시도해 주세요.", Toast.LENGTH_LONG).show();
+                stopSelf();
             }
+            PendingIntent mPI = PendingIntent.getActivity(
+                    getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNoti = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle(getResources().getString(R.string.app_name))
+                    .setContentText(getResources().getString(R.string.app_touch))
+                    .setSmallIcon(R.drawable.splash)
+                    .setTicker(getResources().getString(R.string.app_alive))
+                    .setWhen(System.currentTimeMillis())
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setAutoCancel(false)
+                    .setContentIntent(mPI)
+                    .build();
+
+            //mNty.notify(3939, mNoti);
+            startForeground(3939, mNoti);
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
+
+            WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+            );
+
+            surview = new Surface(this);
+
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            wm.addView(surview, params2);
+
+            temp = (int) Math.round(w.getTemprature() - 273.15);
         } else if (!isNETAlive && !isGPSAlive) {
             Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
             stopSelf();
@@ -278,6 +295,8 @@ public class AppService extends Service {
 
         timer.schedule(timertask, 1000, timerdelay_weather * 1000);
 
+
+
         return Service.START_STICKY;
     }
 
@@ -288,8 +307,10 @@ public class AppService extends Service {
 
         locationManager.removeUpdates(locationListener);
 
-        WindowManager wm = ((WindowManager) getSystemService(getApplicationContext().WINDOW_SERVICE));
-        wm.removeView(surview);
+        if (surview != null) {
+            WindowManager wm = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
+            wm.removeView(surview);
+        }
 
         stopForeground(true);
         Toast.makeText(getBaseContext(), getResources().getString(R.string.service_stop), Toast.LENGTH_LONG).show();

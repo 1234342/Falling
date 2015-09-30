@@ -2,6 +2,7 @@ package com.kudosku.falling;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -72,8 +73,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        dvch = height;
-        dvcw = width;
     }
 
     @Override
@@ -154,9 +153,16 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     }*/
 
     public void make() {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            dvch = display.getHeight();
+            dvcw = display.getWidth();
+        } else {
+            dvch = display.getWidth();
+            dvcw = display.getHeight();
+        }
         int x = random.nextInt(dvcw);
         int y = -30;
-        int speedX = 0;//(int)(Math.random() * 20 + 1);
+        int speedX = 0;
         int speedY = random.nextInt(20);
         Bitmap imgbit = null;
         int cloudy = AppService.w.getCloudy();
@@ -164,33 +170,33 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         int rain = AppService.w.getRain();
         int weather = 0;
 
-        if (list.size() <= AppService.temp) {
-
-            if(Math.round(AppService.w.getCloudy()) <= 20) {
-                if(Calendar.getInstance().get(Calendar.MONTH) <= 12) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
-                    weather = 1;
-                }
-                if(Calendar.getInstance().get(Calendar.MONTH) <= 10){
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.fallen_leaves_1_16);
-                    weather = 2;
-                }
-                if(Calendar.getInstance().get(Calendar.MONTH) <= 8) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
-                    weather = 3;
-                }
-                if(Calendar.getInstance().get(Calendar.MONTH) <= 6) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
-                    weather = 4;
-                }
-                if(Calendar.getInstance().get(Calendar.MONTH) <= 3) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
-                    weather = 1;
-                }
-                //season image
-            } else {
-                //cloud image
+        if(Math.round(AppService.w.getCloudy()) <= 20) {
+            if(Calendar.getInstance().get(Calendar.MONTH) <= 12) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
+                weather = 1;
             }
+            if(Calendar.getInstance().get(Calendar.MONTH) <= 10){
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.fallen_leaves_1_16);
+                weather = 2;
+            }
+            if(Calendar.getInstance().get(Calendar.MONTH) <= 8) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
+                weather = 3;
+            }
+            if(Calendar.getInstance().get(Calendar.MONTH) <= 6) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
+                weather = 4;
+            }
+            if(Calendar.getInstance().get(Calendar.MONTH) <= 3) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
+                weather = 1;
+            }
+            //season image
+        } else {
+            //cloud image
+        }
+
+        if (list.size() <= AppService.temp) {
             if(Math.round(AppService.w.getSnow()) >= 1) {
                 int imgran = random.nextInt(6);
                 if (imgran == 1) {
@@ -212,6 +218,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                     imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_3_8);
                 }
                 weather = 3;
+                System.out.print("snow");
             }
             if((Math.round(AppService.w.getRain()) >= 1 )) {
                 int imgran = random.nextInt(3);
@@ -225,6 +232,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                     imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_3_64);
                 }
                 weather = 2;
+                System.out.print("rain");
             }
 
             SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
@@ -238,11 +246,19 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
             SurfaceInit Init = list.get(i);
             //Init.x += Init.speedX;
             Init.y += Init.speedY;
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                dvch = display.getHeight();
+                dvcw = display.getWidth();
+            } else {
+                dvch = display.getWidth();
+                dvcw = display.getHeight();
+            }
 
             if(Init.y >= dvch +20 ) {
-                Init.x = (int)(Math.random() * dvcw + 1);
-                Init.speedY = (int)(Math.random() * 20 + 1);
+                Init.x = random.nextInt(dvcw);
+                Init.speedY = random.nextInt(20);
                 Init.y = 0;
+
                 if (Init.cloudy != AppService.w.getCloudy() || Init.rain != AppService.w.getRain() || Init.snow != AppService.w.getSnow()) {
                     list.remove(i);
                 }

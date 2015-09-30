@@ -22,14 +22,13 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Runnable {
 
-    Menu mMenu;
-
-    public Context setContext() {
-        Context context = this.getBaseContext();
-        return context;
-    }
+    Thread thread;
+    Boolean Running = false;
+    Boolean retry = false;
+    MenuItem svion;
+    MenuItem svioff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +37,26 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
 
-        List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(50);
-
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isAutoOn = sharedPref.getBoolean("auto_service", true);
 
         if (!(isServiceRunning(AppService.class)) && isAutoOn) {
             Intent svi = new Intent(MainActivity.this, AppService.class);
             startService(svi);
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        retry = true;
+        Running = false;
+        while(retry) {
+            try{
+                retry = false;
+                thread.join();
+            } catch (Exception e) {
+                e.getStackTrace();
+            }
         }
     }
 
@@ -98,10 +109,8 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.serviceoff, menu);
         getMenuInflater().inflate(R.menu.serviceon, menu);
 
-        mMenu = menu;
-
-        MenuItem svioff = mMenu.findItem(R.id.serviceoff);
-        MenuItem svion = mMenu.findItem(R.id.serviceon);
+        svioff = menu.findItem(R.id.serviceoff);
+        svion = menu.findItem(R.id.serviceon);
 
         if (isServiceRunning(AppService.class)) {
             svion.setVisible(false);
@@ -110,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
             svioff.setVisible(false);
             svion.setVisible(true);
         }
+
+        Running = true;
+        thread = new Thread(this);
+        thread.start();
 
         return true;
     }
@@ -150,9 +163,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu (Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        MenuItem svioff = menu.findItem(R.id.serviceoff);
-        MenuItem svion = menu.findItem(R.id.serviceon);
-
         if (isServiceRunning(AppService.class)) {
             svion.setVisible(false);
             svioff.setVisible(true);
@@ -162,5 +172,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+    @Override
+    public void run() {
+        if (Running) {
+            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("sviStat", getApplicationContext().MODE_ENABLE_WRITE_AHEAD_LOGGING);
+
+            if (sharedPref.getBoolean("sviStat", false)) {
+                svion.setVisible(false);
+                svioff.setVisible(true);
+            } else {
+                svioff.setVisible(false);
+                svion.setVisible(true);
+            }
+
+        }
     }
 }

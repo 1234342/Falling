@@ -2,14 +2,18 @@ package com.kudosku.falling;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.MaskFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.test.RenamingDelegatingContext;
 import android.view.Display;
@@ -18,6 +22,8 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +40,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     boolean running = false;
     private Display display;
     private int dvch,dvcw;
-    private Random random;
+    private Random random = new Random();
     private Paint paint;
     private int ranx = 0;
     private int ro = 0;
@@ -47,7 +53,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         super(context);
         context_ = context;
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        img = BitmapFactory.decodeResource(getResources(), R.drawable.snow);
         img2 = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
         dvch = display.getHeight();
         dvcw = display.getWidth();
@@ -71,8 +76,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        dvch = height;
-        dvcw = width;
     }
 
     @Override
@@ -103,14 +106,29 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
                     for(int i=0; i<list.size(); i++) {
-                            SurfaceInit Init = list.get(i);
+                        SurfaceInit Init = list.get(i);
+                        if(Init.weather == 4) {
                             matrix.reset();
-                            matrix.postRotate(ro, img.getWidth() / 2, img.getHeight() / 2);
+                            matrix.postRotate(ro, Init.imgbit.getWidth() / 2, Init.imgbit.getHeight() / 2);
                             matrix.postTranslate(Init.x, Init.y);
-                            canvas.drawBitmap(img, matrix, null);
+                            canvas.drawBitmap(Init.imgbit, matrix, null);
+                        }
+                        if(Init.weather == 1 || Init.weather == 3) {
+                            canvas.drawBitmap(Init.imgbit, Init.x, Init.y, null);
+                        }
+                        if(Init.weather == 2) {
+                            matrix.reset();
+                            matrix.postRotate(ro);
+                            matrix.postTranslate(Init.x, Init.y);
+                            canvas.drawBitmap(Init.imgbit, matrix, null);
+                        }
                     }
 
                     canvas.drawText("개수:" + list.size(), 100, 200, paint);
+
+                    BlurMaskFilter blur = new BlurMaskFilter( 100, BlurMaskFilter.Blur.NORMAL );
+                    paint.setMaskFilter(blur);
+                    canvas.drawBitmap(Bitmap.createScaledBitmap((((BitmapDrawable)getResources().getDrawable(R.drawable.a)).getBitmap()), 100, 100, true), 0, 0, paint);
 
                     make();
                     move();
@@ -142,29 +160,100 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     }*/
 
     public void make() {
-        int x = (int)(Math.random() * dvcw + 1);
+        int x = random.nextInt(dvcw);
         int y = -30;
-        int speedX = (int)(Math.random() * 20 + 1);
-        int speedY = (int)(Math.random() * 20 + 1);
+        int speedX = 0;
+        int speedY = random.nextInt(20);
+        Bitmap imgbit = null;
+        int cloudy = AppService.w.getCloudy();
+        int snow = AppService.w.getSnow();
+        int rain = AppService.w.getRain();
+        int weather = 0;
 
-        SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY);
+        if(Math.round(AppService.w.getCloudy()) <= 20) {
+            if(Calendar.getInstance().get(Calendar.MONTH) >= 12) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
+                weather = 1;
+            } else if(Calendar.getInstance().get(Calendar.MONTH) >= 10){
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.fallen_leaves_1_16);
+                weather = 2;
+            } else if(Calendar.getInstance().get(Calendar.MONTH) >= 8) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
+                weather = 3;
+            }else if(Calendar.getInstance().get(Calendar.MONTH) >= 6) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
+                weather = 4;
+            }else if(Calendar.getInstance().get(Calendar.MONTH) >= 3) {
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
+                weather = 1;
+            }
+            //season image
+        } else {
+            //cloud image
+        }
 
         if (list.size() <= AppService.temp) {
+            if(Math.round(AppService.w.getSnow()) >= 1) {
+                int imgran = random.nextInt(6);
+                if (imgran == 1) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
+                }
+                if (imgran == 2) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_8);
+                }
+                if (imgran == 3) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_2_16);
+                }
+                if (imgran == 4) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_2_8);
+                }
+                if (imgran == 5) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_3_16);
+                }
+                if (imgran == 6) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_3_8);
+                }
+                weather = 3;
+                System.out.print("snow");
+            }
+            if((Math.round(AppService.w.getRain()) >= 1 )) {
+                int imgran = random.nextInt(3);
+                if(imgran == 1) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
+                }
+                if(imgran == 2) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_2_64);
+                }
+                if(imgran == 3) {
+                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_3_64);
+                }
+                weather = 2;
+                System.out.print("rain");
+            }
+
+            SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
+
             list.add(Init);
         }
     }
 
     public void move() {
-        for(SurfaceInit Init : list) {
+        for(int i=0; i<list.size(); i++) {
+            SurfaceInit Init = list.get(i);
             //Init.x += Init.speedX;
             Init.y += Init.speedY;
 
             if(Init.y >= dvch +20 ) {
-                Init.x = (int)(Math.random() * dvcw + 1);
-                Init.speedY = (int)(Math.random() * 20 + 1);
+                Init.x = random.nextInt(dvcw);
+                Init.speedY = random.nextInt(20);
                 Init.y = 0;
+
+                if (Init.cloudy != AppService.w.getCloudy() || Init.rain != AppService.w.getRain() || Init.snow != AppService.w.getSnow()) {
+                    list.remove(i);
+                }
             }
         }
+
     }
 
 }

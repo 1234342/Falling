@@ -1,8 +1,8 @@
 package com.kudosku.falling;
 
 public class WeatherInit {
-    int lat;
-    int ion;
+    Double lat;
+    Double ion;
     Float temperature;
     String weather;
     int cloudy;
@@ -10,8 +10,8 @@ public class WeatherInit {
     int rain;
     String city;
 
-    public void setLat(int lat){ this.lat = lat;}
-    public void setIon(int ion){ this.ion = ion;}
+    public void setLat(Double lat){ this.lat = lat;}
+    public void setIon(Double ion){ this.ion = ion;}
     public void setTemperature(Float t){ this.temperature = t;}
     public void setWeather(String weather){ this.weather = weather;}
     public void setCloudy(int cloudy){ this.cloudy = cloudy;}
@@ -19,8 +19,8 @@ public class WeatherInit {
     public void setRain(int rain){ this.rain = rain;}
     public void setCity(String city){ this.city = city;}
 
-    public int getLat(){ return lat;}
-    public int getIon() { return ion;}
+    public Double getLat(){ return lat;}
+    public Double getIon() { return ion;}
     public String getWeather(){ return weather;}
     public Float getTemprature() { return temperature;}
     public int getCloudy() { return cloudy; }

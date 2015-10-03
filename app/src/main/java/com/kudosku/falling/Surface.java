@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.MaskFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.test.RenamingDelegatingContext;
 import android.view.Display;
@@ -123,6 +126,10 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
 
                     canvas.drawText("개수:" + list.size(), 100, 200, paint);
 
+                    BlurMaskFilter blur = new BlurMaskFilter( 100, BlurMaskFilter.Blur.NORMAL );
+                    paint.setMaskFilter(blur);
+                    canvas.drawBitmap(Bitmap.createScaledBitmap((((BitmapDrawable)getResources().getDrawable(R.drawable.a)).getBitmap()), 100, 100, true), 0, 0, paint);
+
                     make();
                     move();
 
@@ -153,13 +160,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     }*/
 
     public void make() {
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            dvch = display.getHeight();
-            dvcw = display.getWidth();
-        } else {
-            dvch = display.getWidth();
-            dvcw = display.getHeight();
-        }
         int x = random.nextInt(dvcw);
         int y = -30;
         int speedX = 0;
@@ -171,23 +171,19 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         int weather = 0;
 
         if(Math.round(AppService.w.getCloudy()) <= 20) {
-            if(Calendar.getInstance().get(Calendar.MONTH) <= 12) {
+            if(Calendar.getInstance().get(Calendar.MONTH) >= 12) {
                 imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
                 weather = 1;
-            }
-            if(Calendar.getInstance().get(Calendar.MONTH) <= 10){
+            } else if(Calendar.getInstance().get(Calendar.MONTH) >= 10){
                 imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.fallen_leaves_1_16);
                 weather = 2;
-            }
-            if(Calendar.getInstance().get(Calendar.MONTH) <= 8) {
+            } else if(Calendar.getInstance().get(Calendar.MONTH) >= 8) {
                 imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
                 weather = 3;
-            }
-            if(Calendar.getInstance().get(Calendar.MONTH) <= 6) {
+            }else if(Calendar.getInstance().get(Calendar.MONTH) >= 6) {
                 imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
                 weather = 4;
-            }
-            if(Calendar.getInstance().get(Calendar.MONTH) <= 3) {
+            }else if(Calendar.getInstance().get(Calendar.MONTH) >= 3) {
                 imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
                 weather = 1;
             }
@@ -246,13 +242,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
             SurfaceInit Init = list.get(i);
             //Init.x += Init.speedX;
             Init.y += Init.speedY;
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                dvch = display.getHeight();
-                dvcw = display.getWidth();
-            } else {
-                dvch = display.getWidth();
-                dvcw = display.getHeight();
-            }
 
             if(Init.y >= dvch +20 ) {
                 Init.x = random.nextInt(dvcw);

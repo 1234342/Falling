@@ -40,8 +40,8 @@ public class AppService extends Service {
     Boolean isnotity_use;
     String Timerpref_weather;
     String Timerpref_location;
-    String lat;
-    String lon;
+    double lat;
+    double lon;
     Timer timer = new Timer();
     SharedPreferences sharedPref;
     int timerdelay_weather = 0;
@@ -60,10 +60,13 @@ public class AppService extends Service {
         SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), MODE_PRIVATE);
         SharedPreferences sharedPref_ = this.getSharedPreferences(getDefaultSharedPreferencesName(this), MODE_ENABLE_WRITE_AHEAD_LOGGING);
 
-        SharedPreferences.Editor editer = sharedPref_.edit();
 
-        editer.putBoolean("sviStat", true);
-        editer.commit();
+        if(sharedPref.getBoolean("sviStat", false) == false) {
+            SharedPreferences.Editor editer = sharedPref_.edit();
+
+            editer.putBoolean("sviStat", true);
+            editer.commit();
+        }
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -92,8 +95,8 @@ public class AppService extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 if (isGPSAlive && isGPSuse) {
-                    int lat = (int) lastKnownLocation.getLatitude();
-                    int lon = (int) lastKnownLocation.getLongitude();
+                    Double lat = lastKnownLocation.getLatitude();
+                    Double lon = lastKnownLocation.getLongitude();
                     if (lat != 0 && lon != 0) {
                         t = new WeatherTask();
 
@@ -110,8 +113,8 @@ public class AppService extends Service {
                         }
                     }
                 } else if (isNETAlive) {
-                    int lat = (int) lastKnownLocation.getLatitude();
-                    int lon = (int) lastKnownLocation.getLongitude();
+                    Double lat = lastKnownLocation.getLatitude();
+                    Double lon = lastKnownLocation.getLongitude();
                     if (lat != 0 && lon != 0) {
                         t = new WeatherTask();
 
@@ -153,8 +156,8 @@ public class AppService extends Service {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
 
         if (isGPSAlive && isGPSuse) {
-            int lat = (int) lastKnownLocation.getLatitude();
-            int lon = (int) lastKnownLocation.getLongitude();
+            Double lat = lastKnownLocation.getLatitude();
+            Double lon = lastKnownLocation.getLongitude();
 
             if (lat != 0 && lon != 0) {
                 t = new WeatherTask();
@@ -203,8 +206,8 @@ public class AppService extends Service {
             wm.addView(surview, params2);
 
         } else if (isNETAlive) {
-            int lat = (int) lastKnownLocation.getLatitude();
-            int lon = (int) lastKnownLocation.getLongitude();
+            Double lat = lastKnownLocation.getLatitude();
+            Double lon = lastKnownLocation.getLongitude();
 
             if (lat != 0 && lon != 0) {
                 t = new WeatherTask();
@@ -274,8 +277,8 @@ public class AppService extends Service {
 
             @Override
             public void run() {
-                int lat = (int) lastKnownLocation.getLatitude();
-                int lon = (int) lastKnownLocation.getLongitude();
+                Double lat = lastKnownLocation.getLatitude();
+                Double lon = lastKnownLocation.getLongitude();
 
                 WeatherTask t = new WeatherTask();
 
@@ -291,6 +294,8 @@ public class AppService extends Service {
                     e.printStackTrace();
                 }
             }
+
+
         };
 
         timer.schedule(timertask, 1000, timerdelay_weather * 1000);

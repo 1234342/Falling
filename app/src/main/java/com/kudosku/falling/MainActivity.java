@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.settings, menu);
-        getMenuInflater().inflate(R.menu.credits, menu);
         getMenuInflater().inflate(R.menu.serviceoff, menu);
         getMenuInflater().inflate(R.menu.serviceon, menu);
 
@@ -120,9 +119,11 @@ public class MainActivity extends AppCompatActivity implements Runnable {
             svion.setVisible(true);
         }
 
-        Running = true;
-        thread = new Thread(this);
-        thread.start();
+        if(Running = false) {
+            Running = true;
+            thread = new Thread();
+            thread.start();
+        }
 
         return true;
     }
@@ -140,10 +141,6 @@ public class MainActivity extends AppCompatActivity implements Runnable {
             case R.id.settings:
                 Intent itn2 = new Intent(MainActivity.this, Setting.class);
                 startActivity(itn2);
-                return true;
-            case R.id.credits:
-                Intent itn3 = new Intent(MainActivity.this, Credits.class);
-                startActivity(itn3);
                 return true;
             case R.id.serviceoff:
                 stopService(svi);
@@ -176,16 +173,20 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     @Override
     public void run() {
         if (Running) {
-            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("sviStat", getApplicationContext().MODE_ENABLE_WRITE_AHEAD_LOGGING);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("sviStat", getApplicationContext().MODE_ENABLE_WRITE_AHEAD_LOGGING);
 
-            if (sharedPref.getBoolean("sviStat", false)) {
-                svion.setVisible(false);
-                svioff.setVisible(true);
-            } else {
-                svioff.setVisible(false);
-                svion.setVisible(true);
-            }
-
+                    if (sharedPref.getBoolean("sviStat", false) == true) {
+                        svion.setVisible(false);
+                        svioff.setVisible(true);
+                    } else {
+                        svioff.setVisible(false);
+                        svion.setVisible(true);
+                    }
+                }
+            });
         }
     }
 }

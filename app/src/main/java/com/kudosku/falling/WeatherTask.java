@@ -5,16 +5,16 @@ import android.os.AsyncTask;
 
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-public class WeatherTask extends AsyncTask<String, Void, WeatherInit> {
+public class WeatherTask extends AsyncTask<Double, Void, WeatherInit> {
 
     @Override
 
-    public WeatherInit doInBackground(String... params) {
+    public WeatherInit doInBackground(Double... params) {
 
         Weather client = new Weather();
 
-        String lat = params[0];
-        String lon = params[1];
+        Double lat = params[0];
+        Double lon = params[1];
 
         WeatherInit w = client.getWeather(lat, lon);
 

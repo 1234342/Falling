@@ -27,5 +27,6 @@
     <string name="select_refresh_time_title">Weather data refresh rate</string>
     <string name="select_refresh_time_summary">Refresh the weather data in accordance with the prescribed period.</string>
 
-    <string name="credits">Credits</string>
+    <string name="credits_title">Credits</string>
+    <string name="credits_summary">View the people who made this app.</string>
 </resources>

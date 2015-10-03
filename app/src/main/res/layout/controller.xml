@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="테스트 시작"
+        android:id="@+id/onoffswitch"
+        android:layout_weight="0.23" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="눈 오게 설정"
+        android:id="@+id/snowbutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="비 오게 설정"
+        android:id="@+id/rainbutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="단풍잎 내리게 설정"
+        android:id="@+id/leavebutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="아지랑이 생기게 설정"
+        android:id="@+id/heatshimmerbutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서리 생기게 설정"
+        android:id="@+id/frostbutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="벚꽃 내리게 설정"
+        android:id="@+id/cherrybutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="구름 생기게 설정"
+        android:id="@+id/cloudbutton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모든 설정 초기화"
+        android:id="@+id/reset" />
+</LinearLayout>

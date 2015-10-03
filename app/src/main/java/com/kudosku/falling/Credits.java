@@ -1,7 +1,10 @@
 package com.kudosku.falling;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,6 +17,9 @@ public class Credits extends AppCompatActivity {
 
     ArrayList<String> credits = new ArrayList<String>();
     ListView listview;
+    int n = 0;
+    android.os.Handler handler;
+    Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +42,41 @@ public class Credits extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            if (position == 0) {
+
+                n++;
+
+                if (n >= 5) {
+                    Intent con = new Intent(Credits.this, Controller.class);
+                    startActivity(con);
+                }
+
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        n = 0;
+                        handler = null;
+                    }
+                };
+
+                if(handler == null) {
+                    handler = new android.os.Handler();
+                    handler.postDelayed(runnable, 1000);
+                }
+
+            }
+
             Toast.makeText(Credits.this, credits.get(position), Toast.LENGTH_SHORT).show();
         }
 
 
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        handler.removeCallbacks(runnable);
+    }
 }

@@ -36,10 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-
-        List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(50);
-
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isAutoOn = sharedPref.getBoolean("auto_service", true);
 
@@ -126,10 +122,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings:
                 Intent itn2 = new Intent(MainActivity.this, Setting.class);
                 startActivity(itn2);
-                return true;
-            case R.id.credits:
-                Intent itn3 = new Intent(MainActivity.this, Credits.class);
-                startActivity(itn3);
                 return true;
             case R.id.serviceoff:
                 stopService(svi);

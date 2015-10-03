@@ -12,7 +12,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.view.SurfaceView;
@@ -36,13 +35,15 @@ public class AppService extends Service {
     Boolean isnotity_use;
     String Timerpref_weather;
     String Timerpref_location;
-    String lat;
-    String lon;
+    double lat;
+    double lon;
     Timer timer = new Timer();
     SharedPreferences sharedPref;
     int timerdelay_weather = 0;
     int timerdelay_location = 0;
     TimerTask timertask;
+    static WeatherInit w;
+    int weather = R.string.clear;
 
     @Override
     public void onCreate() {
@@ -80,43 +81,47 @@ public class AppService extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 if (isGPSAlive && isGPSuse) {
-                    lat = String.valueOf(lastKnownLocation.getLatitude());
-                    lon = String.valueOf(lastKnownLocation.getLongitude());
+                    if (lastKnownLocation != null) {
+                        lat = lastKnownLocation.getLatitude();
+                        lon = lastKnownLocation.getLongitude();
 
-                    WeatherTask t = new WeatherTask();
+                        WeatherTask t = new WeatherTask();
 
-                    try {
+                        try {
 
-                        WeatherInit w = t.execute(lat,lon).get();
+                            w = t.execute(lat, lon).get();
 
-                        String weather = w.getWeather();
+                            String weather = w.getWeather();
 
-                        temp = (int) Math.round(w.getTemprature() - 273.15);
+                            temp = (int) Math.round(w.getTemperature() - 273.15);
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 } else if (isNETAlive) {
-                    String lat = String.valueOf(lastKnownLocation.getLatitude());
-                    String lon = String.valueOf(lastKnownLocation.getLongitude());
+                    if (lastKnownLocation != null) {
+                        lat = lastKnownLocation.getLatitude();
+                        lon = lastKnownLocation.getLongitude();
 
-                    WeatherTask t = new WeatherTask();
+                        WeatherTask t = new WeatherTask();
 
-                    try {
+                        try {
 
-                        WeatherInit w = t.execute(lat,lon).get();
+                            w = t.execute(lat, lon).get();
 
-                        String weather = w.getWeather();
+                            String weather = w.getWeather();
 
-                        temp = (int) Math.round(w.getTemprature() - 273.15);
+                            temp = (int) Math.round(w.getTemperature() - 273.15);
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else if (!isNETAlive && !isGPSAlive) {
                     Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
@@ -144,103 +149,144 @@ public class AppService extends Service {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
 
         if (isGPSAlive && isGPSuse) {
-            lat = String.valueOf(lastKnownLocation.getLatitude());
-            lon = String.valueOf(lastKnownLocation.getLongitude());
+            if (lastKnownLocation != null) {
+                lat = lastKnownLocation.getLatitude();
+                lon = lastKnownLocation.getLongitude();
 
-            WeatherTask t = new WeatherTask();
+                WeatherTask t = new WeatherTask();
 
-            try {
+                try {
 
-                WeatherInit w = t.execute(lat,lon).get();
+                    w = t.execute(lat,lon).get();
 
-                PendingIntent mPI = PendingIntent.getActivity(
-                        getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent mPI = PendingIntent.getActivity(
+                            getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
+                            PendingIntent.FLAG_UPDATE_CURRENT);
 
-                NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNoti = new NotificationCompat.Builder(getApplicationContext())
-                        .setContentTitle(getResources().getString(R.string.app_name))
-                        .setContentText(getResources().getString(R.string.app_touch))
-                        .setSmallIcon(R.drawable.splash)
-                        .setTicker(getResources().getString(R.string.app_alive))
-                        .setWhen(System.currentTimeMillis())
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setAutoCancel(false)
-                        .setContentIntent(mPI)
-                        .build();
+                    NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Objects.equals(w.getWeather(), "Haze")) {
+                        weather = R.string.haze;
+                    }
+                    if (Objects.equals(w.getWeather(), "Mist")) {
+                        weather = R.string.mist;
+                    }
+                    if (Objects.equals(w.getWeather(), "Clouds")) {
+                        weather = R.string.cloud;
+                    }
+                    if (Objects.equals(w.getWeather(), "Clear")) {
+                        weather = R.string.clear;
+                    }
+                    mNoti = new NotificationCompat.Builder(getApplicationContext())
+                            .setContentTitle(getResources().getString(R.string.app_name))
+                            .setContentText(getResources().getString(R.string.city)+ ": " + w.getCity() + "," +
+                                    getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + ","+
+                                    getResources().getString(R.string.clouds) + ": " + w. getCloudy() + "%," +
+                                    getResources().getString(R.string.temp)+ Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C" )
+                            .setSmallIcon(R.drawable.splash)
+                            .setTicker(getResources().getString(R.string.app_alive))
+                            .setWhen(System.currentTimeMillis())
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setAutoCancel(false)
+                            .setContentIntent(mPI)
+                            .build();
 
-                //mNty.notify(3939, mNoti);
-                startForeground(3939, mNoti);
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
+                    //mNty.notify(3939, mNoti);
+                    startForeground(3939, mNoti);
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
 
-                WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                );
+                    WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                    );
 
-                surview = new Surface(this);
+                    surview = new Surface(this);
 
-                WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-                wm.addView(surview, params2);
+                    WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                    wm.addView(surview, params2);
 
-                String weather = w.getWeather();
+                    String weather = w.getWeather();
 
-                temp = (int) Math.round(w.getTemprature() - 273.15);
+                    temp = (int) Math.round(w.getTemperature() - 273.15);
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "위치 정보를 받을 수 없습니다. 몇 초후 다시 시도해 주세요.", Toast.LENGTH_LONG).show();
+                stopSelf();
             }
 
         } else if (isNETAlive) {
-            lat = String.valueOf(lastKnownLocation.getLatitude());
-            lon = String.valueOf(lastKnownLocation.getLongitude());
+            if (lastKnownLocation != null) {
+                lat = lastKnownLocation.getLatitude();
+                lon = lastKnownLocation.getLongitude();
 
-            WeatherTask t = new WeatherTask();
+                WeatherTask t = new WeatherTask();
 
-            try {
+                try {
 
-                WeatherInit w = t.execute(lat,lon).get();
+                    WeatherInit w = t.execute(lat, lon).get();
 
-                PendingIntent mPI = PendingIntent.getActivity(
-                        getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent mPI = PendingIntent.getActivity(
+                            getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class),
+                            PendingIntent.FLAG_UPDATE_CURRENT);
 
-                NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNoti = new NotificationCompat.Builder(getApplicationContext())
-                        .setContentTitle(getResources().getString(R.string.app_name))
-                        .setContentText(getResources().getString(R.string.app_touch))
-                        .setSmallIcon(R.drawable.splash)
-                        .setTicker(getResources().getString(R.string.app_alive))
-                        .setWhen(System.currentTimeMillis())
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setAutoCancel(false)
-                        .setContentIntent(mPI)
-                        .build();
+                    NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Objects.equals(w.getWeather(), "Haze")) {
+                        weather = R.string.haze;
+                    }
+                    if (Objects.equals(w.getWeather(), "Mist")) {
+                        weather = R.string.mist;
+                    }
+                    if (Objects.equals(w.getWeather(), "Clouds")) {
+                        weather = R.string.cloud;
+                    }
+                    if (Objects.equals(w.getWeather(), "Clear")) {
+                        weather = R.string.clear;
+                    }
+                    mNoti = new NotificationCompat.Builder(getApplicationContext())
+                            .setContentTitle(getResources().getString(R.string.app_name))
+                            .setContentText(getResources().getString(R.string.city) + ": " + w.getCity() + "," +
+                                    getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + "," +
+                                    getResources().getString(R.string.clouds) + ": " + w.getCloudy() + "%," +
+                                    getResources().getString(R.string.temp) + Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C")
+                            .setSmallIcon(R.drawable.splash)
+                            .setTicker(getResources().getString(R.string.app_alive))
+                            .setWhen(System.currentTimeMillis())
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setAutoCancel(false)
+                            .setContentIntent(mPI)
+                            .build();
 
-                //mNty.notify(3939, mNoti);
-                startForeground(3939, mNoti);
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
 
-                WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                );
+                    //mNty.notify(3939, mNoti);
+                    startForeground(3939, mNoti);
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_start), Toast.LENGTH_LONG).show();
 
-                surview = new Surface(this);
+                    WindowManager.LayoutParams params2 = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                    );
 
-                WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-                wm.addView(surview, params2);
+                    surview = new Surface(this);
 
-                String weather = w.getWeather();
+                    WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                    wm.addView(surview, params2);
 
-                temp = (int) Math.round(w.getTemprature() - 273.15);
+                    String weather = w.getWeather();
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                    temp = (int) Math.round(w.getTemperature() - 273.15);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "위치 정보를 받을 수 없습니다. 몇 초후 다시 시도해 주세요.", Toast.LENGTH_LONG).show();
+                stopSelf();
             }
         } else if (!isNETAlive && !isGPSAlive) {
             Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
@@ -263,16 +309,16 @@ public class AppService extends Service {
 
             @Override
             public void run() {
-                lat = String.valueOf(lastKnownLocation.getLatitude());
-                lon = String.valueOf(lastKnownLocation.getLongitude());
+                lat = lastKnownLocation.getLatitude();
+                lon = lastKnownLocation.getLongitude();
 
                 WeatherTask t = new WeatherTask();
 
                 try {
 
-                    WeatherInit w = t.execute(lat, lon).get();
+                    w = t.execute(lat, lon).get();
 
-                    temp = (int) Math.round(w.getTemprature() - 273.15);
+                    temp = (int) Math.round(w.getTemperature() - 273.15);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -294,8 +340,10 @@ public class AppService extends Service {
 
         locationManager.removeUpdates(locationListener);
 
-        WindowManager wm = ((WindowManager) getSystemService(getApplicationContext().WINDOW_SERVICE));
-        wm.removeView(surview);
+        if(surview != null) {
+            WindowManager wm = ((WindowManager) getSystemService(getApplicationContext().WINDOW_SERVICE));
+            wm.removeView(surview);
+        }
 
         stopForeground(true);
         Toast.makeText(getBaseContext(), getResources().getString(R.string.service_stop), Toast.LENGTH_LONG).show();
@@ -322,33 +370,5 @@ public class AppService extends Service {
     }
 
     public void notify(WeatherInit w, String weather) {
-        if (Objects.equals(weather, "Haze")) {
-            System.out.println("상태: " + getString(R.string.haze) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%");
-
-            Toast.makeText(getApplicationContext(), "상태: " + getString(R.string.haze) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%", Toast.LENGTH_LONG).show();
-        }
-        if (Objects.equals(weather, "Mist")) {
-            System.out.println("상태: " + getString(R.string.mist) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%");
-
-            Toast.makeText(getApplicationContext(), "상태: " + getString(R.string.mist) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%", Toast.LENGTH_LONG).show();
-        }
-        if (Objects.equals(weather, "Clouds")) {
-            System.out.println("상태: " + getString(R.string.cloud) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%");
-
-            Toast.makeText(getApplicationContext(), "상태: " + getString(R.string.cloud) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%", Toast.LENGTH_LONG).show();
-        }
-        if (Objects.equals(weather, "Clear")) {
-            System.out.println("상태: " + getString(R.string.clear) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%");
-
-            Toast.makeText(getApplicationContext(), "상태: " + getString(R.string.clear) + "\n기온: " + Math.round(((w.getTemprature() - 273.15) * 1000)) / 1000.0 + "°C" +
-                    "\n 지역: " + w.getCity() + "\n 구름: " + w.getCloudy() + "%", Toast.LENGTH_LONG).show();
-        }
     }
 }

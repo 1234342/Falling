@@ -15,7 +15,7 @@ import java.net.URL;
 public class Weather {
 
     final static String openWeatherURL = "http://api.openweathermap.org/data/2.5/weather";
-    public WeatherInit getWeather(String lat,String lon){
+    public WeatherInit getWeather(Double lat,Double lon){
         WeatherInit w = new WeatherInit();
         String urlString = openWeatherURL + "?lat="+lat+"&lon="+lon;
 
@@ -30,7 +30,7 @@ public class Weather {
             JSONObject json = new JSONObject(getStringFromInputStream(in));
 
             w = parseJSON(json);
-            w.setIon(lon);
+            w.setLon(lon);
             w.setLat(lat);
 
         }catch(MalformedURLException e){
@@ -57,15 +57,15 @@ public class Weather {
     private WeatherInit parseJSON(JSONObject json) throws JSONException {
 
         WeatherInit w = new WeatherInit();
-        w.setTemperature((float) json.getJSONObject("main").getDouble("temp"));
+        w.setTemperature(json.getJSONObject("main").getDouble("temp"));
         w.setWeather(json.getJSONArray("weather").getJSONObject(0).getString("main"));
         w.setCity(json.getString("name"));
-        w.setCloudy(json.getJSONObject("clouds").getString("all"));
+        w.setCloudy(json.getJSONObject("clouds").getInt("all"));
         if (json.has("snow")) {
-            w.setSnow(json.getJSONArray("snow").getJSONObject(0).getString("3h"));
+            w.setSnow(json.getJSONArray("snow").getJSONObject(0).getInt("3h"));
         }
         if (json.has("rain")) {
-            w.setRain(json.getJSONArray("rain").getJSONObject(0).getString("3h"));
+            w.setRain(json.getJSONArray("rain").getJSONObject(0).getInt("3h"));
         }
         return w;
 

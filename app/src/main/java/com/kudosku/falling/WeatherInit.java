@@ -1,29 +1,30 @@
 package com.kudosku.falling;
 
 public class WeatherInit {
-    Float lat;
-    Float ion;
-    Float temperature;
+    Double lat;
+    Double ion;
+    Double temperature;
     String weather;
-    String cloudy;
-    String snow;
-    String rain;
+    int cloudy;
+    int snow;
+    int rain;
     String city;
 
-    public voiFloatat(String lat){ this.lat = lat;}
-    public voiFloaton(String ion){ this.ion = ion;}
-    public void setTemperature(Float t){ this.temperature = t;}
+    public void setLat(Double lat){ this.lat = lat;}
+    public void setLon(Double ion){ this.ion = ion;}
+    public void setTemperature(Double t){ this.temperature = t;}
     public void setWeather(String weather){ this.weather = weather;}
-    public void setCloudy(String cloudy){ this.cloudy = cloudy;}
-    public void setSnow(String snow){ this.snow = snow;}
-    public void setRain(String rain){ this.rain = rain;}
-    public void setCity(String city){ this.city = cFloat
-    public String getLat(){ returnFloat
-    public String getIon() { return ion;}
+    public void setCloudy(int cloudy){ this.cloudy = cloudy;}
+    public void setSnow(int snow){ this.snow = snow;}
+    public void setRain(int rain){ this.rain = rain;}
+    public void setCity(String city){ this.city = city;}
+
+    public Double getLat(){ return ion;}
+    public Double getIon() { return ion;}
     public String getWeather(){ return weather;}
-    public Float getTemprature() { return temperature;}
-    public String getCloudy() { return cloudy; }
-    public String getSnow() { return snow; }
-    public String getRain() { return rain; }
+    public Double getTemperature() { return temperature;}
+    public int getCloudy() { return cloudy; }
+    public int getSnow() { return snow; }
+    public int getRain() { return rain; }
     public String getCity() { return city; }
 }

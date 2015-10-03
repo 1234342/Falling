@@ -35,5 +35,13 @@
     <string name="select_refresh_time_location_title">위치 데이터 새로고침 주기</string>
     <string name="select_refresh_time_location_summary">정해진 주기에 따라 위치 데이터를 새로고침합니다.</string>
 
-    <string name="credits">제작자</string>
+    <string name="city">지역</string>
+    <string name="weather">날씨</string>
+    <string name="clouds">구름</string>
+    <string name="temp">기온</string>
+    
+    <string name="other">그 외</string>
+
+    <string name="credits_title">제작자</string>
+    <string name="credits_summary">이 앱을 제작한 사람들을 봅니다.</string>
 </resources>

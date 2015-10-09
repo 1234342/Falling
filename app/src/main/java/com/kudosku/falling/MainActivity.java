@@ -33,10 +33,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        if(sharedPref.getBoolean("first",true)) {
+            editor.putBoolean("first",false);
+            editor.commit();
+
+            Intent itn = new Intent(MainActivity.this, FirstGuide.class);
+            startActivity(itn);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isAutoOn = sharedPref.getBoolean("auto_service", true);
 
         if (!(isServiceRunning(AppService.class)) && isAutoOn) {

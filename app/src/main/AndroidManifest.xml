@@ -57,6 +57,16 @@
             android:label="Controller" android:theme="@style/ControllerTheme" >
         </activity>
 
+        <activity
+            android:name="FirstGuide"
+            android:label="FirstGuide" android:theme="@style/GuideTheme" >
+        </activity>
+
+        <activity
+            android:name="Donates"
+            android:label="@string/donates_title" android:theme="@style/DonatesTheme" >
+        </activity>
+
         <service android:name=".AppService"
             android:process=":remote" android:permission="android.permission.SYSTEM_ALERT_WINDOW" >
         </service>

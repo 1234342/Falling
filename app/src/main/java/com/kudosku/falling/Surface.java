@@ -17,6 +17,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.test.RenamingDelegatingContext;
+import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -49,7 +50,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     private int x,y = 0;
     private int sx,sy;
     Matrix matrix = new Matrix();
-    static List<SurfaceInit> list = new ArrayList<SurfaceInit>();
+    List<SurfaceInit> list = new ArrayList<SurfaceInit>();
 
     public Surface(Context context) {
         super(context);
@@ -58,6 +59,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         img2 = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
         dvch = display.getHeight();
         dvcw = display.getWidth();
+        list = new ArrayList<SurfaceInit>();
         paint = new Paint();
         holder = getHolder();
         holder.setFormat(PixelFormat.TRANSLUCENT);
@@ -86,6 +88,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         setRunning(false);
         while(retry) {
             try{
+                List<SurfaceInit> list = null;
                 retry = false;
                 thread.join();
             } catch (Exception e) {
@@ -154,38 +157,15 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         int speedX = 0;
         int speedY = 0;
         Bitmap imgbit = null;
-        int cloudy = AppService.w.getCloudy();
-        int snow = AppService.w.getSnow();
-        int rain = AppService.w.getRain();
+        int cloudy = AppService.w.cloudy;
+        int snow = AppService.w.snow;
+        int rain = AppService.w.rain;
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        int temp = AppService.temp;
         int weather = 0;
 
-        if(Math.round(AppService.w.getCloudy()) <= 20) {
-            if(Calendar.getInstance().get(Calendar.MONTH) == 11) {
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
-                speedY = random.nextInt(20) + 1;
-                weather = 4;
-            } else if(Calendar.getInstance().get(Calendar.MONTH) >= 9){
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.fallen_leaves_1_16);
-                speedY = random.nextInt(10) + 1;
-                speedX = random.nextInt(3) + 1;
-                weather = 3;
-            } else if(Calendar.getInstance().get(Calendar.MONTH) >= 7) {
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
-                speedY = random.nextInt(20) + 1;
-                weather = 2;
-            }else if(Calendar.getInstance().get(Calendar.MONTH) <= 3) {
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.cherry_blossom_1_16);
-                speedY = random.nextInt(10) + 1;
-                speedX = random.nextInt(3) + 1;
-                weather = 1;
-            }
-            //season image
-        } else {
-            //cloud image
-        }
-
-        if (list.size() <= AppService.temp *2 && AppService.w.getSnow() == 0) {
-            if(Math.round(AppService.w.getRain()) >= 1) {
+        if (list.size() <= temp *2 && snow == 0) {
+            if(rain >= 1) {
                 int imgran = random.nextInt(3) + 1;
                 if(imgran == 1) {
                     imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
@@ -198,14 +178,13 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                 }
                 speedY = random.nextInt(30) + 1;
                 weather = 2;
-                System.out.print("rain");
 
                 SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
 
                 list.add(Init);
             }
-        } else if (AppService.temp *3 - list.size() > 0 && AppService.w.getSnow() >= 1) {
-            if(Math.round(AppService.w.getSnow()) >= 1) {
+        } else if (temp *4 - list.size() > 0 && snow >= 1) {
+            if(snow >= 1) {
                 int imgran = random.nextInt(6) + 1;
                 if (imgran == 1) {
                     imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_1_16);
@@ -227,12 +206,13 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                 }
                 speedY = random.nextInt(20) + 1;
                 weather = 4;
-                System.out.print("snow");
 
                 SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
 
                 list.add(Init);
             }
+
+
         }
     }
 
@@ -245,6 +225,12 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
             Init.y += Init.speedY;
 
             if(Init.y >= dvch +20 ) {
+                list.remove(Init);
+            }
+            if(Init.x >= dvcw +20 ) {
+                list.remove(Init);
+            }
+            if(Init.x <= -20 ) {
                 list.remove(Init);
             }
         }

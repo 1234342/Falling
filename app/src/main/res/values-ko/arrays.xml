@@ -14,4 +14,24 @@
         <item>30 분</item>
         <item>1 시간(비추천)</item>
     </string-array>
+    <string-array name="snow_select_image">
+        <item>눈 1(기본값)</item>
+        <item>눈 2</item>
+        <item>눈 3</item>
+    </string-array>
+    <string-array name="rain_select_image">
+        <item>비 1(기본값)</item>
+        <item>비 2</item>
+        <item>비 3</item>
+    </string-array>
+    <string-array name="leave_select_image">
+        <item>단풍잎 1(기본값)</item>
+        <item>단풍잎 2</item>
+        <item>단풍잎 3</item>
+    </string-array>
+    <string-array name="cherry_select_image">
+        <item>벚꽃 1(기본값)</item>
+        <item>벚꽃 2</item>
+        <item>벚꽃 3</item>
+    </string-array>
 </resources>

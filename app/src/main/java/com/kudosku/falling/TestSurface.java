@@ -1,34 +1,22 @@
 package com.kudosku.falling;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.MaskFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Handler;
-import android.test.RenamingDelegatingContext;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
@@ -222,7 +210,7 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
 
         if (list.size() <= temp *2 && snow == 0) {
             if(rain >= 1) {
-                int imgran = random.nextInt(3) + 1;
+                int imgran = random.nextInt(9) + 1;
                 if(imgran == 1) {
                     imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
                 }
@@ -281,12 +269,15 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
             Init.y += Init.speedY;
 
             if(Init.y >= dvch +20 ) {
+                Init.imgbit.recycle();
                 list.remove(Init);
             }
             if(Init.x >= dvcw +20 ) {
+                Init.imgbit.recycle();
                 list.remove(Init);
             }
             if(Init.x <= -20 ) {
+                Init.imgbit.recycle();
                 list.remove(Init);
             }
         }

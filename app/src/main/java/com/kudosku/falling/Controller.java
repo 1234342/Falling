@@ -18,6 +18,7 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
     Switch s1;
     Button b1,b2,b3,b4,b5,b6,b7,b8;
     SurfaceView testsurview;
+    WindowManager wm;
     static int snow = 0;
     static int rain = 0;
     static int cloudy = 0;
@@ -129,13 +130,12 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
                         );
 
                     testsurview = new TestSurface(this);
-
-                    WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                    wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
                     wm.addView(testsurview, params);
+
                     Toast.makeText(Controller.this, "start", Toast.LENGTH_SHORT).show();
                 } else {
                     if (testsurview != null) {
-                        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                         wm.removeView(testsurview);
                         Toast.makeText(Controller.this, "end", Toast.LENGTH_SHORT).show();
                     }
@@ -144,12 +144,20 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        if (testsurview != null) {
+            wm.removeView(testsurview);
+        }
+    }
+
+    /*@Override
     public void onDestroy() {
         super.onDestroy();
 
         if (testsurview != null) {
-            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(testsurview);
         }
-    }
+    } */
 }

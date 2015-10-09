@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-dontoptimize
+-dontshrink
+
+-keep class com.kudosku.falling.controller{ *; }
+-keep class com.kudosku.falling.credits{ *; }
+

@@ -2,13 +2,17 @@
     <string name="app_name">Falling</string>
     <string name="app_lang">Korean</string>
 
+    <string name="app_alive">Falling이 실행중입니다.</string>
+
     <string name="cloud">구름많음</string>
     <string name="clear">맑음</string>
     <string name="haze">연무</string>
     <string name="mist">박무</string>
 
-    <string name="app_alive">Falling이 실행되고 있습니다</string>
-    <string name="app_touch">알림을 누르면 앱 화면으로 이동합니다.</string>
+    <string name="rain">비</string>
+    <string name="snow">눈</string>
+    <string name="leave">단풍잎</string>
+    <string name="cherry">벚꽃</string>
 
     <string name="yes">네</string>
     <string name="no">아니요</string>
@@ -35,6 +39,9 @@
     <string name="select_refresh_time_location_title">위치 데이터 새로고침 주기</string>
     <string name="select_refresh_time_location_summary">정해진 주기에 따라 위치 데이터를 새로고침합니다.</string>
 
+    <string name="effect_use_title">특수 효과 사용</string>
+    <string name="effect_use_summary">떨어지는 것에 특수 효과를 사용합니다.</string>
+
     <string name="city">지역</string>
     <string name="weather">날씨</string>
     <string name="clouds">구름</string>
@@ -44,4 +51,12 @@
 
     <string name="credits_title">제작자</string>
     <string name="credits_summary">이 앱을 제작한 사람들을 봅니다.</string>
+    <string name="donates_title">기부자</string>
+    <string name="donates_summary">이 앱을 후원한 사람들을 봅니다.</string>
+
+    <string name="snow_select_image_title">눈 이미지 선택</string>
+    <string name="rain_select_image_title">비 이미지 선택</string>
+    <string name="leave_select_image_title">단풍잎 이미지 선택</string>
+    <string name="cherry_select_image_title">벚꽃 이미지 선택</string>
+    <string name="select_image_summary">자신이 마음에 드는 이미지로 선택할 수 있습니다.</string>
 </resources>

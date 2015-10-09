@@ -27,4 +27,44 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    <string-array name="snow_select_image">
+        <item>Snow 1(Default)</item>
+        <item>Snow 2</item>
+        <item>Snow 3</item>
+    </string-array>
+    <string-array name="snow_select_image_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="rain_select_image">
+        <item>Rain 1(Default)</item>
+        <item>Rain 2</item>
+        <item>Rain 3</item>
+    </string-array>
+    <string-array name="rain_select_image_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="leave_select_image">
+        <item>Maple leaf 1(Default)</item>
+        <item>Maple leaf 2</item>
+        <item>Maple leaf 3</item>
+    </string-array>
+    <string-array name="leave_select_image_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="cherry_select_image">
+        <item>Cherry blossom 1(Default)</item>
+        <item>Cherry blossom 2</item>
+        <item>Cherry blossom 3</item>
+    </string-array>
+    <string-array name="cherry_select_image_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

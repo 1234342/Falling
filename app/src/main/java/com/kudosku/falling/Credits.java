@@ -77,6 +77,9 @@ public class Credits extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        handler.removeCallbacks(runnable);
+        if(handler != null) {
+            handler.removeCallbacks(runnable);
+        }
+
     }
 }

@@ -23,6 +23,50 @@
             android:defaultValue="0"
             android:entries="@array/refresh_weather_times"
             android:entryValues="@array/refresh_weather_values" />
+
+        <ListPreference
+            android:key="snow_select_image"
+            android:title="@string/snow_select_image_title"
+            android:summary="@string/select_image_summary"
+            android:defaultValue="0"
+            android:entries="@array/snow_select_image"
+            android:entryValues="@array/snow_select_image_values" />
+
+        <ListPreference
+            android:key="rain_select_image"
+            android:title="@string/rain_select_image_title"
+            android:summary="@string/select_image_summary"
+            android:defaultValue="0"
+            android:entries="@array/rain_select_image"
+            android:entryValues="@array/rain_select_image_values" />
+
+        <ListPreference
+            android:key="leave_select_image"
+            android:title="@string/leave_select_image_title"
+            android:summary="@string/select_image_summary"
+            android:defaultValue="0"
+            android:entries="@array/leave_select_image"
+            android:entryValues="@array/leave_select_image_values" />
+
+        <ListPreference
+            android:key="cherry_select_image"
+            android:title="@string/cherry_select_image_title"
+            android:summary="@string/select_image_summary"
+            android:defaultValue="0"
+            android:entries="@array/cherry_select_image"
+            android:entryValues="@array/cherry_select_image_values" />
+
+        <CheckBoxPreference
+            android:key="effect_use"
+            android:title="@string/effect_use_title"
+            android:summary="@string/effect_use_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key=""
+            android:title="@string/effect_use_title"
+            android:summary="@string/effect_use_summary"
+            android:defaultValue="true" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_application">
@@ -44,6 +88,11 @@
             android:key="credits"
             android:title="@string/credits_title"
             android:summary="@string/credits_summary" />
+
+        <Preference
+            android:key="donates"
+            android:title="@string/donates_title"
+            android:summary="@string/donates_summary" />
     </PreferenceCategory>
 
 </PreferenceScreen>

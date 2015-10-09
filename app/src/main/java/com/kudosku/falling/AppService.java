@@ -32,7 +32,7 @@ public class AppService extends Service {
     Boolean isGPSAlive;
     Boolean isNETAlive;
     Boolean isGPSuse;
-    Boolean isnotity_use;
+    Boolean isEffectuse;
     String Timerpref_weather;
     String Timerpref_location;
     double lat;
@@ -44,6 +44,12 @@ public class AppService extends Service {
     TimerTask timertask;
     static WeatherInit w;
     int weather = R.string.clear;
+    static int rain_Set = R.drawable.rain_1_32;
+    static int snow_Set = R.drawable.snow_1_128;
+    static String leave_setting;
+    static String rain_setting;
+    static String cherry_setting;
+    static String snow_setting;
 
     @Override
     public void onCreate() {
@@ -52,7 +58,7 @@ public class AppService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), this.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), MODE_PRIVATE);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -62,6 +68,7 @@ public class AppService extends Service {
         isNETAlive = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         isGPSAlive = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isGPSuse = sharedPref.getBoolean("Gps_use", true);
+        isEffectuse = sharedPref.getBoolean("effect_use", true);
         Timerpref_location = sharedPref.getString("location", "2");
         Timerpref_weather = sharedPref.getString("weather", "2");
 
@@ -129,19 +136,19 @@ public class AppService extends Service {
             }
         };
 
-        if (Objects.equals(Timerpref_location, "0")) {
+        if (Timerpref_location == "0") {
             timerdelay_location = 60;
         }
-        if (Objects.equals(Timerpref_location, "1")) {
+        if (Timerpref_location == "1") {
             timerdelay_location = 60 * 10; // sec X minute
         }
-        if (Objects.equals(Timerpref_location, "2")) {
+        if (Timerpref_location == "2") {
             timerdelay_location = 60 * 15;
         }
-        if (Objects.equals(Timerpref_location, "3")) {
+        if (Timerpref_location == "3") {
             timerdelay_location = 60 * 30;
         }
-        if (Objects.equals(Timerpref_location, "4")) {
+        if (Timerpref_location == "4") {
             timerdelay_location = 60 * 60;
         }
 
@@ -164,26 +171,12 @@ public class AppService extends Service {
                             PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (Objects.equals(w.getWeather(), "Haze")) {
-                        weather = R.string.haze;
-                    }
-                    if (Objects.equals(w.getWeather(), "Mist")) {
-                        weather = R.string.mist;
-                    }
-                    if (Objects.equals(w.getWeather(), "Clouds")) {
-                        weather = R.string.cloud;
-                    }
-                    if (Objects.equals(w.getWeather(), "Clear")) {
-                        weather = R.string.clear;
-                    }
                     mNoti = new NotificationCompat.Builder(getApplicationContext())
                             .setContentTitle(getResources().getString(R.string.app_name))
-                            .setContentText(getResources().getString(R.string.city)+ ": " + w.getCity() + "," +
-                                    getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + ","+
-                                    getResources().getString(R.string.clouds) + ": " + w. getCloudy() + "%," +
-                                    getResources().getString(R.string.temp)+ Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C" )
+                            .setContentText(getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + "," +
+                                    getResources().getString(R.string.clouds) + ": " + w.getCloudy() + "%," +
+                                    getResources().getString(R.string.temp) + Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C")
                             .setSmallIcon(R.drawable.splash)
-                            .setTicker(getResources().getString(R.string.app_alive))
                             .setWhen(System.currentTimeMillis())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setAutoCancel(false)
@@ -234,26 +227,12 @@ public class AppService extends Service {
                             PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (Objects.equals(w.getWeather(), "Haze")) {
-                        weather = R.string.haze;
-                    }
-                    if (Objects.equals(w.getWeather(), "Mist")) {
-                        weather = R.string.mist;
-                    }
-                    if (Objects.equals(w.getWeather(), "Clouds")) {
-                        weather = R.string.cloud;
-                    }
-                    if (Objects.equals(w.getWeather(), "Clear")) {
-                        weather = R.string.clear;
-                    }
                     mNoti = new NotificationCompat.Builder(getApplicationContext())
                             .setContentTitle(getResources().getString(R.string.app_name))
-                            .setContentText(getResources().getString(R.string.city) + ": " + w.getCity() + "," +
-                                    getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + "," +
+                            .setContentText(getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + "," +
                                     getResources().getString(R.string.clouds) + ": " + w.getCloudy() + "%," +
                                     getResources().getString(R.string.temp) + Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C")
                             .setSmallIcon(R.drawable.splash)
-                            .setTicker(getResources().getString(R.string.app_alive))
                             .setWhen(System.currentTimeMillis())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setAutoCancel(false)
@@ -292,16 +271,16 @@ public class AppService extends Service {
             Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
             stopSelf();
         }
-        if (Objects.equals(Timerpref_weather, "0")) {
+        if (Timerpref_weather == "0") {
             timerdelay_weather = 60 * 10;
         }
-        if (Objects.equals(Timerpref_weather, "1")) {
+        if (Timerpref_weather == "1") {
             timerdelay_weather = 60 * 15; // sec X minute
         }
-        if (Objects.equals(Timerpref_weather, "2")) {
+        if (Timerpref_weather == "2") {
             timerdelay_weather = 60 * 30;
         }
-        if (Objects.equals(Timerpref_weather, "3")) {
+        if (Timerpref_weather == "3") {
             timerdelay_weather = 60 * 60;
         }
 

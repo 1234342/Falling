@@ -17,6 +17,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
@@ -58,6 +59,8 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     boolean size_setting;
     int snow_Set = 0;
     int rain_Set = 0;
+    int alpha = 130;
+    Boolean alpha_turning = false;
     SharedPreferences sharedPref;
 
     public Surface(Context context) {
@@ -72,8 +75,9 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         holder = getHolder();
         holder.setFormat(PixelFormat.TRANSLUCENT);
         holder.addCallback(this);
-        paint.setAlpha(130);
+        //paint.setAlpha(alpha);
 
+        handler.sendEmptyMessage(0);
 
         sharedPref = context_.getSharedPreferences(getDefaultSharedPreferencesName(context_), context_.MODE_PRIVATE);
 
@@ -103,6 +107,29 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         }
 
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(alpha < 250 && !alpha_turning) {
+                alpha++;
+            }
+            if(alpha == 250 && !alpha_turning) {
+                alpha_turning = true;
+            }
+            if(alpha <= 250 && alpha_turning && alpha > 50) {
+                alpha--;
+            }
+            if(alpha == 50 && alpha_turning) {
+                alpha_turning = false;
+            }
+
+            paint.reset();
+            paint.setAlpha(alpha);
+
+            handler.sendEmptyMessageDelayed(0, 50);
+        }
+    };
 
     private static String getDefaultSharedPreferencesName(Context context) {
         return context.getPackageName() + "_preferences";
@@ -136,6 +163,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         setRunning(false);
         while(retry) {
             try{
+                handler.removeMessages(0);
                 List<SurfaceInit> list = null;
                 retry = false;
                 thread.join();
@@ -159,14 +187,16 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                     if(canvas != null) {
                         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
+                        Log.i("Falling-Surface", String.valueOf(alpha));
+
                         if (display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
                             dvch = display.getHeight();
                             dvcw = display.getWidth();
-                            Log.i("Falling-Surface1", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
+                            //Log.i("Falling-Surface1", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
                         } else {
                             dvch = display.getHeight();
                             dvcw = display.getWidth();
-                            Log.i("Falling-Surface2", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
+                            //Log.i("Falling-Surface2", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
                         }
 
                         for(int i=0; i<list.size(); i++) {

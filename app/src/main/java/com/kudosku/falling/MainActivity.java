@@ -185,6 +185,20 @@ public class MainActivity extends AppCompatActivity {
                 adapter.array.add(Math.round(((obj.getDouble("temp") - 273.15) * 1000)) / 1000.0);
                 adapter.array.add(obj.getString("city"));
 
+                adapter.array2.add(R.drawable.ic_wb_sunny_24dp);
+                adapter.array2.add(R.drawable.ic_wb_cloudy_24dp);
+                if(Math.round(obj.getDouble("temp") - 273.15) >= 30) {
+                    adapter.array2.add(R.drawable.ic_thermometer_green_24dp);
+                    //adapter.array2.add(R.drawable.ic_thermometer_red_24dp);
+                } else if( Math.round(obj.getDouble("temp") - 273.15) >= 15) {
+                    adapter.array2.add(R.drawable.ic_thermometer_orange_24dp);
+                } else if(Math.round(obj.getDouble("temp") - 273.15) >= 0) {
+                    //adapter.array2.add(R.drawable.ic_thermometer_green_24dp);
+                    adapter.array2.add(R.drawable.ic_thermometer_red_24dp);
+                }
+                adapter.array2.add(R.drawable.ic_location_24dp);
+                adapter.notifyDataSetChanged();
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -192,12 +206,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            adapter.array2.add(R.drawable.ic_wb_sunny_black_24dp);
-            adapter.array2.add(R.drawable.ic_wb_cloudy_black_24dp);
-            adapter.array2.add(R.drawable.ic_thermometer_black_24dp);
-            adapter.array2.add(R.drawable.ic_location_black_24dp);
-            adapter.notifyDataSetChanged();
 
             mHandler2.sendEmptyMessageDelayed(0, 5000);
         }

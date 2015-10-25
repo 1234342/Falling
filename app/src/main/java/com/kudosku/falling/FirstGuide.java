@@ -22,6 +22,8 @@ public class FirstGuide extends AppCompatActivity {
 
         ViewPager pager = (ViewPager)findViewById(R.id.pager);
         pager.setAdapter(new Pager(this));
+
+        pager.requestTransparentRegion(pager);
     }
 
     class Pager extends PagerAdapter implements View.OnClickListener {

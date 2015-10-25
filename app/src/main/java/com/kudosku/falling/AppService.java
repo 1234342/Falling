@@ -8,16 +8,26 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -26,7 +36,6 @@ public class AppService extends Service {
     private Notification mNoti;
     SurfaceView surview;
     static Location lastKnownLocation = null;
-    static int temp;
     LocationManager locationManager;
     LocationListener locationListener;
     Boolean isGPSAlive;
@@ -37,19 +46,15 @@ public class AppService extends Service {
     String Timerpref_location;
     double lat;
     double lon;
-    Timer timer = new Timer();
-    SharedPreferences sharedPref;
     int timerdelay_weather = 0;
     int timerdelay_location = 0;
-    TimerTask timertask;
     static WeatherInit w;
     int weather = R.string.clear;
-    static int rain_Set = R.drawable.rain_1_32;
-    static int snow_Set = R.drawable.snow_1_128;
-    static String leave_setting;
-    static String rain_setting;
-    static String cherry_setting;
-    static String snow_setting;
+    Thread thread;
+    Boolean running = false;
+    Boolean retry = false;
+    SharedPreferences sharedPref;
+    FileOutputStream fileOutputStream;
 
     @Override
     public void onCreate() {
@@ -57,8 +62,9 @@ public class AppService extends Service {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
 
-        SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), MODE_PRIVATE);
+        sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), Context.MODE_PRIVATE);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -98,13 +104,29 @@ public class AppService extends Service {
 
                             w = t.execute(lat, lon).get();
 
-                            String weather = w.getWeather();
+                            JSONObject obj = new JSONObject();
+                            obj.put("temp", w.getTemperature());
+                            obj.put("weather", w.getWeather());
+                            obj.put("cloudy", w.getCloudy());
+                            obj.put("snow", w.getSnow());
+                            obj.put("rain", w.getRain());
+                            obj.put("city", w.getCity());
 
-                            temp = (int) Math.round(w.getTemperature() - 273.15);
+                            String string = obj.toString();
+
+                            fileOutputStream = openFileOutput("weather.json", Context.MODE_PRIVATE);
+                            fileOutputStream.write(string.getBytes());
+                            fileOutputStream.close();
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -120,13 +142,29 @@ public class AppService extends Service {
 
                             w = t.execute(lat, lon).get();
 
-                            String weather = w.getWeather();
+                            JSONObject obj = new JSONObject();
+                            obj.put("temp", w.getTemperature());
+                            obj.put("weather", w.getWeather());
+                            obj.put("cloudy", w.getCloudy());
+                            obj.put("snow", w.getSnow());
+                            obj.put("rain", w.getRain());
+                            obj.put("city", w.getCity());
 
-                            temp = (int) Math.round(w.getTemperature() - 273.15);
+                            String string = obj.toString();
+
+                            fileOutputStream = openFileOutput("weather.json", Context.MODE_PRIVATE);
+                            fileOutputStream.write(string.getBytes());
+                            fileOutputStream.close();
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -136,24 +174,24 @@ public class AppService extends Service {
             }
         };
 
-        if (Timerpref_location == "0") {
+        if (Timerpref_location.equals("0")) {
             timerdelay_location = 60;
         }
-        if (Timerpref_location == "1") {
+        if (Timerpref_location.equals("1")) {
             timerdelay_location = 60 * 10; // sec X minute
         }
-        if (Timerpref_location == "2") {
+        if (Timerpref_location.equals("2")) {
             timerdelay_location = 60 * 15;
         }
-        if (Timerpref_location == "3") {
+        if (Timerpref_location.equals("3")) {
             timerdelay_location = 60 * 30;
         }
-        if (Timerpref_location == "4") {
+        if (Timerpref_location.equals("4")) {
             timerdelay_location = 60 * 60;
         }
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, timerdelay_location * 1000, 250, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, timerdelay_location * 1000, 250, locationListener);
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, timerdelay_location * 1000, 250, locationListener);
 
         if (isGPSAlive && isGPSuse) {
             if (lastKnownLocation != null) {
@@ -164,19 +202,52 @@ public class AppService extends Service {
 
                 try {
 
-                    w = t.execute(lat,lon).get();
+                    w = t.execute(lat, lon).get();
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("temp", w.getTemperature());
+                    obj.put("weather", w.getWeather());
+                    obj.put("cloudy", w.getCloudy());
+                    obj.put("snow", w.getSnow());
+                    obj.put("rain", w.getRain());
+                    obj.put("city", w.getCity());
+
+                    String string = obj.toString();
+
+                    fileOutputStream = openFileOutput("weather.json", Context.MODE_PRIVATE);
+                    fileOutputStream.write(string.getBytes());
+                    fileOutputStream.close();
 
                     PendingIntent mPI = PendingIntent.getActivity(
                             getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
                             PendingIntent.FLAG_UPDATE_CURRENT);
 
+                    if(obj.getString("weather").equals("Haze")) {
+                        weather = R.string.haze;
+                    }
+                    if(obj.getString("weather").equals("Clear")) {
+                        weather = R.string.clear;
+                    }
+                    if(obj.getString("weather").equals("Rain")) {
+                        weather = R.string.rain;
+                    }
+                    if(obj.getString("weather").equals("Snow")) {
+                        weather = R.string.rain;
+                    }
+                    if(obj.getString("weather").equals("Thunderstorm")) {
+                        weather = R.string.Thunderstorm;
+                    }
+                    if(obj.getString("weather").equals("Mist")) {
+                        weather = R.string.mist;
+                    }
+
                     NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     mNoti = new NotificationCompat.Builder(getApplicationContext())
                             .setContentTitle(getResources().getString(R.string.app_name))
                             .setContentText(getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + "," +
-                                    getResources().getString(R.string.clouds) + ": " + w.getCloudy() + "%," +
-                                    getResources().getString(R.string.temp) + Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C")
-                            .setSmallIcon(R.drawable.splash)
+                                    getResources().getString(R.string.clouds) + ": " + obj.getInt("cloudy") + "%," +
+                                    getResources().getString(R.string.temp) + Math.round((((obj.getDouble("temp")) - 273.15) * 1000)) / 1000.0 + "°C")
+                            .setSmallIcon(R.drawable.snow_1_16)
                             .setWhen(System.currentTimeMillis())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setAutoCancel(false)
@@ -197,13 +268,17 @@ public class AppService extends Service {
                     WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                     wm.addView(surview, params2);
 
-                    String weather = w.getWeather();
-
-                    temp = (int) Math.round(w.getTemperature() - 273.15);
+                    handler.sendEmptyMessage(0);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -220,19 +295,52 @@ public class AppService extends Service {
 
                 try {
 
-                    WeatherInit w = t.execute(lat, lon).get();
+                    w = t.execute(lat, lon).get();
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("temp", w.getTemperature());
+                    obj.put("weather", w.getWeather());
+                    obj.put("cloudy", w.getCloudy());
+                    obj.put("snow", w.getSnow());
+                    obj.put("rain", w.getRain());
+                    obj.put("city", w.getCity());
+
+                    String string = obj.toString();
+
+                    fileOutputStream = openFileOutput("weather.json", Context.MODE_PRIVATE);
+                    fileOutputStream.write(string.getBytes());
+                    fileOutputStream.close();
 
                     PendingIntent mPI = PendingIntent.getActivity(
-                            getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class),
+                            getApplicationContext(), 0, new Intent(getApplicationContext(),MainActivity.class),
                             PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    if(obj.getString("weather").equals("Haze")) {
+                        weather = R.string.haze;
+                    }
+                    if(obj.getString("weather").equals("Clear")) {
+                        weather = R.string.clear;
+                    }
+                    if(obj.getString("weather").equals("Rain")) {
+                        weather = R.string.rain;
+                    }
+                    if(obj.getString("weather").equals("Snow")) {
+                        weather = R.string.rain;
+                    }
+                    if(obj.getString("weather").equals("Thunderstorm")) {
+                        weather = R.string.Thunderstorm;
+                    }
+                    if(obj.getString("weather").equals("Mist")) {
+                        weather = R.string.mist;
+                    }
 
                     NotificationManager mNty = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     mNoti = new NotificationCompat.Builder(getApplicationContext())
                             .setContentTitle(getResources().getString(R.string.app_name))
                             .setContentText(getResources().getString(R.string.weather) + ": " + getResources().getString(weather) + "," +
-                                    getResources().getString(R.string.clouds) + ": " + w.getCloudy() + "%," +
-                                    getResources().getString(R.string.temp) + Math.round(((w.getTemperature() - 273.15) * 1000)) / 1000.0 + "°C")
-                            .setSmallIcon(R.drawable.splash)
+                                    getResources().getString(R.string.clouds) + ": " + obj.getInt("cloudy") + "%," +
+                                    getResources().getString(R.string.temp) + Math.round((((obj.getDouble("temp")) - 273.15) * 1000)) / 1000.0 + "°C")
+                            .setSmallIcon(R.drawable.snow_1_16)
                             .setWhen(System.currentTimeMillis())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setAutoCancel(false)
@@ -254,13 +362,17 @@ public class AppService extends Service {
                     WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                     wm.addView(surview, params2);
 
-                    String weather = w.getWeather();
-
-                    temp = (int) Math.round(w.getTemperature() - 273.15);
+                    handler.sendEmptyMessage(0);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -271,51 +383,17 @@ public class AppService extends Service {
             Toast.makeText(getApplicationContext(), "모든 수신장치가 연결되어 있지 않습니다!", Toast.LENGTH_LONG).show();
             stopSelf();
         }
-        if (Timerpref_weather == "0") {
-            timerdelay_weather = 60 * 10;
-        }
-        if (Timerpref_weather == "1") {
-            timerdelay_weather = 60 * 15; // sec X minute
-        }
-        if (Timerpref_weather == "2") {
-            timerdelay_weather = 60 * 30;
-        }
-        if (Timerpref_weather == "3") {
-            timerdelay_weather = 60 * 60;
-        }
-
-        timertask = new TimerTask() {
-
-            @Override
-            public void run() {
-                lat = lastKnownLocation.getLatitude();
-                lon = lastKnownLocation.getLongitude();
-
-                WeatherTask t = new WeatherTask();
-
-                try {
-
-                    w = t.execute(lat, lon).get();
-
-                    temp = (int) Math.round(w.getTemperature() - 273.15);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        timer.schedule(timertask, 1000, timerdelay_weather * 1000);
 
         return Service.START_STICKY;
     }
 
     public void onDestroy(){
+        super.onDestroy();
 
-        timer.cancel();
-        timertask = null;
+        //timer.cancel();
+        //timertask = null;
+
+        handler.removeMessages(0);
 
         locationManager.removeUpdates(locationListener);
 
@@ -350,4 +428,63 @@ public class AppService extends Service {
 
     public void notify(WeatherInit w, String weather) {
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what == 0) {
+
+                Timerpref_weather = sharedPref.getString("weather_delay", "2");
+                if (Timerpref_weather.equals("0")) {
+                    timerdelay_weather = 60;
+                }
+                if (Timerpref_weather.equals("1")) {
+                    timerdelay_weather = 60 * 10;
+                }
+                if (Timerpref_weather.equals("2")) {
+                    timerdelay_weather = 60 * 15; // sec X minute
+                }
+                if (Timerpref_weather.equals("3")) {
+                    timerdelay_weather = 60 * 30;
+                }
+                if (Timerpref_weather.equals("4")) {
+                    timerdelay_weather = 60 * 60;
+                }
+
+                WeatherTask t = new WeatherTask();
+
+                try {
+
+                    w = t.execute(lat, lon).get();
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("temp", w.getTemperature());
+                    obj.put("weather", w.getWeather());
+                    obj.put("cloudy", w.getCloudy());
+                    obj.put("snow", w.getSnow());
+                    obj.put("rain", w.getRain());
+                    obj.put("city", w.getCity());
+
+                    String string = obj.toString();
+
+                    fileOutputStream = openFileOutput("weather.json", Context.MODE_PRIVATE);
+                    fileOutputStream.write(string.getBytes());
+                    fileOutputStream.close();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                handler.sendEmptyMessageDelayed(0, 1000 * timerdelay_weather);
+            }
+        }
+    };
 }

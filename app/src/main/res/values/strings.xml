@@ -3,9 +3,12 @@
     <string name="app_lang">English</string>
 
     <string name="app_alive">Falling is Running</string>
+    <string name="service_reboot_required">Service Reboot Required</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
 
     <string name="service_start">Service Started</string>
     <string name="service_stop">Service Stopped</string>
@@ -28,4 +31,12 @@
 
     <string name="credits_title">Credits</string>
     <string name="credits_summary">View the people who made this app.</string>
+
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
 </resources>

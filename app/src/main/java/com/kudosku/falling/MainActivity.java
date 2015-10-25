@@ -2,50 +2,112 @@ package com.kudosku.falling;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
-import android.view.SurfaceView;
-import android.view.WindowManager;
-import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
     Menu mMenu;
+    Switch serviceSwitch;
+    LinearLayout servicelinearLayout;
+    TextView textview;
+    ListView stat;
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    Adapter adapter;
+    FileInputStream fileInputStream;
 
-    public Context setContext() {
-        Context context = this.getBaseContext();
-        return context;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPref.edit();
+        sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), Context.MODE_MULTI_PROCESS);
+        editor = sharedPref.edit();
 
-        if(sharedPref.getBoolean("first",true)) {
+        if(sharedPref.getBoolean("first", true)) {
+            editor.clear();
             editor.putBoolean("first",false);
-            editor.commit();
+            editor.apply();
 
             Intent itn = new Intent(MainActivity.this, FirstGuide.class);
             startActivity(itn);
         }
 
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        serviceSwitch = (Switch) findViewById(R.id.serviceonoff);
+        servicelinearLayout = (LinearLayout) findViewById(R.id.day_bar);
+        textview = (TextView) findViewById(R.id.day_date);
+        stat = (ListView) findViewById(R.id.day_stat);
+
+        textview.setText(getResources().getText(doDayOfWeek()));
+
+        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+
+        final Drawable drawable = wallpaperManager.getDrawable();
+
+        final LinearLayout linearLayout = (LinearLayout)findViewById(R.id.wallpaper);
+        linearLayout.setBackground(drawable);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (null != actionBar) {
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        }
+
+        //TextView toolbar_text = (TextView)findViewById(R.id.toolbar_text);
+        //toolbar_text.setAlpha(50);
+
+
+        adapter = new Adapter(this);
+        stat.setAdapter(adapter);
+        stat.setBackgroundColor(Color.rgb(255, 255, 255));
 
         boolean isAutoOn = sharedPref.getBoolean("auto_service", true);
 
@@ -53,6 +115,103 @@ public class MainActivity extends AppCompatActivity {
             Intent svi = new Intent(MainActivity.this, AppService.class);
             startService(svi);
         }
+
+        serviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Intent svi = new Intent(MainActivity.this, AppService.class);
+                switch (buttonView.getId()) {
+                    case R.id.serviceonoff:
+                        if (isChecked) {
+                            if (!(isServiceRunning(AppService.class))) {
+                                startService(svi);
+                                servicelinearLayout.setBackgroundColor(Color.rgb(255, 255, 255));
+                            }
+                        } else {
+                            if ((isServiceRunning(AppService.class))) {
+                                stopService(svi);
+                                servicelinearLayout.setBackgroundColor(Color.rgb(26, 188, 156));
+                            }
+                        }
+                }
+            }
+        });
+
+        mHandler.sendEmptyMessage(0);
+        mHandler2.sendEmptyMessage(0);
+    }
+
+    Handler mHandler = new Handler(){
+        public void handleMessage(Message msg) {
+            if (!(isServiceRunning(AppService.class))) {
+                servicelinearLayout.setBackgroundColor(Color.rgb(255, 255, 255));
+            } else {
+                servicelinearLayout.setBackgroundColor(Color.rgb(231, 76, 60));
+            }
+
+            mHandler.sendEmptyMessageDelayed(0, 100);
+        }
+    };
+
+    Handler mHandler2 = new Handler(){
+        public void handleMessage(Message msg) {
+            adapter.array.clear();
+            adapter.array2.clear();
+
+            try {
+                fileInputStream = openFileInput("weather.json");
+                byte[] buffer = new byte[fileInputStream.available()];
+                fileInputStream.read(buffer);
+                fileInputStream.close();
+
+                String string = new String(buffer);
+                JSONObject obj = new JSONObject(string);
+
+                adapter.array.add(obj.getString("weather"));
+                adapter.array.add(obj.getInt("cloudy"));
+                adapter.array.add(Math.round(((obj.getDouble("temp") - 273.15) * 1000)) / 1000.0);
+                adapter.array.add(obj.getString("city"));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            adapter.array2.add(R.drawable.ic_wb_sunny_black_24dp);
+            adapter.array2.add(R.drawable.ic_wb_cloudy_black_24dp);
+            adapter.array2.add(R.drawable.ic_thermometer_black_24dp);
+            adapter.array2.add(R.drawable.ic_location_black_24dp);
+            adapter.notifyDataSetChanged();
+
+            mHandler2.sendEmptyMessageDelayed(0, 5000);
+        }
+    };
+
+    public void onResume() {
+        super.onResume();
+
+        if (!(isServiceRunning(AppService.class))) {
+            serviceSwitch.setChecked(false);
+            servicelinearLayout.setBackgroundColor(Color.rgb(255, 255, 255));
+        } else {
+            serviceSwitch.setChecked(true);
+            servicelinearLayout.setBackgroundColor(Color.rgb(26, 188, 156));
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        mHandler.removeMessages(0);
+        mHandler2.removeMessages(0);
+    }
+
+    private static String getDefaultSharedPreferencesName(Context context) {
+        return context.getPackageName() + "_preferences";
     }
 
     public boolean isServiceRunning (Class<?> serviceclass) {
@@ -100,32 +259,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.settings, menu);
-        getMenuInflater().inflate(R.menu.serviceoff, menu);
-        getMenuInflater().inflate(R.menu.serviceon, menu);
-
-        mMenu = menu;
-
-        MenuItem svioff = mMenu.findItem(R.id.serviceoff);
-        MenuItem svion = mMenu.findItem(R.id.serviceon);
-
-        if (isServiceRunning(AppService.class)) {
-            svion.setVisible(false);
-            svioff.setVisible(true);
-        } else if (!isServiceRunning(AppService.class)) {
-            svioff.setVisible(false);
-            svion.setVisible(true);
-        }
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-    Intent svi = new Intent(MainActivity.this, AppService.class);
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        Intent svi = new Intent(MainActivity.this, AppService.class);
 
         //noinspection SimplifiableIfStatement
         switch (id) {
@@ -133,35 +276,112 @@ public class MainActivity extends AppCompatActivity {
                 Intent itn2 = new Intent(MainActivity.this, Setting.class);
                 startActivity(itn2);
                 return true;
-            case R.id.serviceoff:
-                stopService(svi);
-                invalidateOptionsMenu();
-                return true;
-            case R.id.serviceon:
-                startService(svi);
-                invalidateOptionsMenu();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
+    private int doDayOfWeek() {
+        Calendar cal = Calendar.getInstance();
+        int strWeek = 0;
+
+        int nWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (nWeek == 1) {
+            strWeek = R.string.sunday;
+        } else if (nWeek == 2) {
+            strWeek = R.string.monday;
+        } else if (nWeek == 3) {
+            strWeek = R.string.tuesday;
+        } else if (nWeek == 4) {
+            strWeek = R.string.wednesday;
+        } else if (nWeek == 5) {
+            strWeek = R.string.thursday;;
+        } else if (nWeek == 6) {
+            strWeek = R.string.friday;
+        } else if (nWeek == 7) {
+            strWeek = R.string.saturday;
+        }
+
+        return strWeek;
+    }
+
+}
+
+class Adapter extends BaseAdapter {
+
+    static ArrayList<java.io.Serializable> array = new ArrayList<java.io.Serializable>();
+    static ArrayList<Integer> array2 = new ArrayList<Integer>();
+    LayoutInflater inflater;
+
+    public Adapter(Context context) {
+
+        inflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+    public int getCount() {
+        return array.size();
+    }
 
-        MenuItem svioff = menu.findItem(R.id.serviceoff);
-        MenuItem svion = menu.findItem(R.id.serviceon);
+    @Override
+    public Object getItem(int position) {
+        return null;
+    }
 
-        if (isServiceRunning(AppService.class)) {
-            svion.setVisible(false);
-            svioff.setVisible(true);
-        } else if (!isServiceRunning(AppService.class)) {
-            svioff.setVisible(false);
-            svion.setVisible(true);
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = null;
+
+        if(convertView==null){
+
+            view = inflater.inflate(R.layout.stat, parent, false);
+
+        }else{
+
+            view = convertView;
+
         }
 
-        return true;
+        TextView text = (TextView)view.findViewById(R.id.stat_text);
+        ImageView img = (ImageView)view.findViewById(R.id.stat_img);
+
+        if(position == 0) {
+            if(array.get(0).toString().equals("Haze")) {
+                text.setText(R.string.haze);
+            }
+            if(array.get(0).toString().equals("Clear")) {
+                text.setText(R.string.clear);
+            }
+            if(array.get(0).toString().equals("Rain")) {
+                text.setText(R.string.rain);
+            }
+            if(array.get(0).toString().equals("Snow")) {
+                text.setText(R.string.snow);
+            }
+            if(array.get(0).toString().equals("Thunderstorm")) {
+                text.setText(R.string.Thunderstorm);
+            }
+            if(array.get(0).toString().equals("Mist")) {
+                text.setText(R.string.mist);
+            }
+            img.setBackgroundResource(array2.get(0));
+        } else if(position == 1) {
+            img.setBackgroundResource(array2.get(1));
+            text.setText(array.get(1).toString() + " %");
+        } else if(position == 2) {
+            img.setBackgroundResource(array2.get(2));
+            text.setText(array.get(2).toString() + " °C");
+        } else if(position == 3) {
+            img.setBackgroundResource(array2.get(3));
+            text.setText(array.get(3).toString());
+        }
+
+        return view;
     }
 }
+

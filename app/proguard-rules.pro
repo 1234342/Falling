@@ -20,4 +20,7 @@
 
 -keep class com.kudosku.falling.controller{ *; }
 -keep class com.kudosku.falling.credits{ *; }
+-keep class com.kudosku.falling.Weather{ *; }
+-keep class com.kudosku.falling.WeatherInit{ *; }
+-keep class com.kudosku.falling.WeatherTask{ *; }
 

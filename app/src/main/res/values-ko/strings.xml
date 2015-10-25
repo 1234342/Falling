@@ -3,11 +3,13 @@
     <string name="app_lang">Korean</string>
 
     <string name="app_alive">Falling이 실행중입니다.</string>
+    <string name="service_reboot_required">서비스 재시작이 필요합니다.</string>
 
     <string name="cloud">구름많음</string>
     <string name="clear">맑음</string>
-    <string name="haze">연무</string>
-    <string name="mist">박무</string>
+    <string name="haze">안개</string>
+    <string name="mist">안개</string>
+    <string name="Thunderstorm">번개</string>
 
     <string name="rain">비</string>
     <string name="snow">눈</string>
@@ -56,7 +58,15 @@
 
     <string name="snow_select_image_title">눈 이미지 선택</string>
     <string name="rain_select_image_title">비 이미지 선택</string>
-    <string name="leave_select_image_title">단풍잎 이미지 선택</string>
-    <string name="cherry_select_image_title">벚꽃 이미지 선택</string>
     <string name="select_image_summary">자신이 마음에 드는 이미지로 선택할 수 있습니다.</string>
+    <string name="size_select_title">큰 이미지 사용</string>
+    <string name="size_select_summary">눈,비의 이미지 크기를 조절합니다.</string>
+
+    <string name="sunday">일요일</string>
+    <string name="monday">월요일</string>
+    <string name="tuesday">화요일</string>
+    <string name="wednesday">수요일</string>
+    <string name="thursday">목요일</string>
+    <string name="friday">금요일</string>
+    <string name="saturday">토요일</string>
 </resources>

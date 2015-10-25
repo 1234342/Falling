@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class Controller extends AppCompatActivity implements View.OnClickListener,Switch.OnCheckedChangeListener {
 
     Switch s1;
-    Button b1,b2,b3,b4,b5,b6,b7,b8;
+    Button b1,b2,b3;
     SurfaceView testsurview;
     WindowManager wm;
     static int snow = 0;
@@ -24,77 +24,54 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
     static int cloudy = 0;
     static int month = 0;
     static int temp = 0;
+    static String snow_setting;
+    static int snow_Set = R.drawable.snow_1_16;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.controller);
 
+        SharedPreferences sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), this.MODE_PRIVATE);
+
+        snow_setting = sharedPref.getString("snow_select_image", "0");
+
+        if(snow_setting.equals("0")) {
+            snow_Set = R.drawable.snow_1_16;
+        }
+        if(snow_setting.equals("1")) {
+            snow_Set = R.drawable.snow_2_16;
+        }
+        if(snow_setting.equals("2")) {
+            snow_Set = R.drawable.snow_3_16;
+        }
+
+        snow_setting = sharedPref.getString("snow_select_image", "0");
+
+        if(snow_setting.equals("0")) {
+            snow_Set = R.drawable.snow_1_16;
+        }
+        if(snow_setting.equals("1")) {
+            snow_Set = R.drawable.snow_2_16;
+        }
+        if(snow_setting.equals("2")) {
+            snow_Set = R.drawable.snow_3_16;
+        }
+
         s1 = (Switch) findViewById(R.id.onoffswitch);
-        b1 = (Button) findViewById(R.id.cherrybutton);
-        b2 = (Button) findViewById(R.id.cloudbutton);
-        b3 = (Button) findViewById(R.id.heatshimmerbutton);
-        b4 = (Button) findViewById(R.id.frostbutton);
-        b5 = (Button)findViewById(R.id.leavebutton);
-        b6 = (Button)findViewById(R.id.snowbutton);
-        b7 = (Button)findViewById(R.id.rainbutton);
-        b8 = (Button)findViewById(R.id.reset);
+        b1 = (Button)findViewById(R.id.snowbutton);
+        b2 = (Button)findViewById(R.id.rainbutton);
+        b3 = (Button)findViewById(R.id.reset);
 
         s1.setOnCheckedChangeListener(this);
         b1.setOnClickListener(this);
         b2.setOnClickListener(this);
         b3.setOnClickListener(this);
-        b4.setOnClickListener(this);
-        b5.setOnClickListener(this);
-        b6.setOnClickListener(this);
-        b7.setOnClickListener(this);
-        b8.setOnClickListener(this);
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.cherrybutton:
-                month = 1;
-                cloudy = 0;
-                temp = 30;
-                snow = 0;
-                rain = 0;
-                Toast.makeText(Controller.this, "spring", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.cloudbutton:
-                month = 1;
-                cloudy = 50;
-                temp = 30;
-                snow = 0;
-                rain = 0;
-                Toast.makeText(Controller.this, "cloud", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.heatshimmerbutton:
-                month = 8;
-                cloudy = 0;
-                temp = 30;
-                snow = 0;
-                rain = 0;
-                Toast.makeText(Controller.this, "summer", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.frostbutton:
-                month = 11;
-                cloudy = 0;
-                temp = 30;
-                snow = 0;
-                rain = 0;
-                Toast.makeText(Controller.this, "winter", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.leavebutton:
-                month = 10;
-                cloudy = 0;
-                temp = 30;
-                snow = 0;
-                rain = 0;
-                Toast.makeText(Controller.this, "leave", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.snowbutton:
-                month = 11;
                 cloudy = 0;
                 temp = 10;
                 snow = 30;
@@ -102,17 +79,16 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
                 Toast.makeText(Controller.this, "snow", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.rainbutton:
-                month = 11;
                 cloudy = 0;
                 temp = 20;
                 rain = 30;
+                snow = 0;
                 Toast.makeText(Controller.this, "rain", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.reset:
                 snow = 0;
                 rain = 0;
                 cloudy = 0;
-                month = 0;
                 temp = 0;
                 Toast.makeText(Controller.this, "reset", Toast.LENGTH_SHORT).show();
                 break;
@@ -137,6 +113,7 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
                 } else {
                     if (testsurview != null) {
                         wm.removeView(testsurview);
+                        testsurview = null;
                         Toast.makeText(Controller.this, "end", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -149,7 +126,12 @@ public class Controller extends AppCompatActivity implements View.OnClickListene
 
         if (testsurview != null) {
             wm.removeView(testsurview);
+            testsurview = null;
         }
+    }
+
+    private static String getDefaultSharedPreferencesName(Context context) {
+        return context.getPackageName() + "_preferences";
     }
 
     /*@Override

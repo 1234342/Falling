@@ -1,6 +1,7 @@
 package com.kudosku.falling;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -38,12 +39,13 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
     private int sx,sy;
     Matrix matrix = new Matrix();
     List<SurfaceInit> list = new ArrayList<SurfaceInit>();
+    int weather = 0;
 
     public TestSurface(Context context) {
         super(context);
         context_ = context;
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        img2 = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
+        img2 = BitmapFactory.decodeResource(getResources(), R.drawable.shine_1);
         dvch = display.getHeight();
         dvcw = display.getWidth();
         list = new ArrayList<SurfaceInit>();
@@ -51,6 +53,8 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
         holder = getHolder();
         holder.setFormat(PixelFormat.TRANSLUCENT);
         holder.addCallback(this);
+
+        paint.setAlpha(130);
     }
 
     public void setRunning(boolean run){
@@ -97,18 +101,22 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
                 synchronized (holder) {
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
+                    if(display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
+                        dvch = display.getWidth();
+                        dvcw = display.getHeight();
+                        //Log.i("Falling-Surface", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
+                    } else {
+                        dvch = display.getHeight();
+                        dvcw = display.getWidth();
+                        //Log.i("Falling-Surface", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
+                    }
+
                     for(int i=0; i<list.size(); i++) {
                         SurfaceInit Init = list.get(i);
-                        if(Init.weather == 3) { // leave
-                            matrix.reset();
-                            matrix.postRotate(ro, Init.imgbit.getWidth() / 2, Init.imgbit.getHeight() / 2);
-                            matrix.postTranslate(Init.x, Init.y);
-                            canvas.drawBitmap(Init.imgbit, matrix, null);
-                        }
-                        if(Init.weather == 1 || Init.weather == 2) { // rain , cherry
+                        if(Init.weather == 1) { // rain
                             canvas.drawBitmap(Init.imgbit, Init.x, Init.y, null);
                         }
-                        if(Init.weather == 4) { // snow
+                        if(Init.weather == 2) { // snow
                             matrix.reset();
                             matrix.postRotate(ro);
                             matrix.postTranslate(Init.x, Init.y);
@@ -116,7 +124,9 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
                         }
                     }
 
-                    canvas.drawText("개수:" + list.size(), 100, 200, paint);
+                    if(weather == 0 && Controller.cloudy <= 30) {
+                        canvas.drawBitmap(img2, 0, 0, paint);
+                    }
 
                     make();
                     move();
@@ -147,82 +157,13 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
         int cloudy = Controller.cloudy;
         int snow = Controller.snow;
         int rain = Controller.rain;
-        int month = Controller.month;
         int temp = Controller.temp;
-        int weather = 0;
-
-        if(cloudy <= 20 && snow == 0 && rain == 0 && temp != 0) {
-            if(month == 11) {
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
-                speedX = 0;
-                speedY = random.nextInt(20) + 1;
-                weather = 4;
-                if (temp *4 - list.size() > 0) {
-                    SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
-
-                    list.add(Init);
-                }
-            } else if(month >= 9){
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.fallen_leaves_1_16);
-                speedY = random.nextInt(10) + 1;
-
-                if (random.nextInt(2) + 1 == 1) {
-                    speedX = random.nextInt(3) + 1;
-                } else {
-                    speedX = -random.nextInt(3) + -1;
-                }
-                weather = 3;
-                if (list.size() <= temp *2) {
-                    SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
-
-                    list.add(Init);
-                }
-            } else if(month >= 7) {
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.splash);
-                speedX = 0;
-                speedY = random.nextInt(20) + 1;
-                weather = 2;
-                if (list.size() <= temp *2) {
-                    SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
-
-                    list.add(Init);
-                }
-            } else if(month <= 3) {
-                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.cherry_blossom_1_16);
-                speedY = random.nextInt(10) + 1;
-
-                if (random.nextInt(2) + 1 == 1) {
-                    speedX = random.nextInt(3) + 1;
-                } else {
-                    speedX = -random.nextInt(3) + -1;
-                }
-                weather = 1;
-                if (list.size() <= temp *2) {
-                    SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
-
-                    list.add(Init);
-                }
-            }
-            //season image
-        } else if (cloudy > 20 && temp != 0) {
-            //cloud image
-        }
 
         if (list.size() <= temp *2 && snow == 0) {
             if(rain >= 1) {
-                int imgran = random.nextInt(9) + 1;
-                if(imgran == 1) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_64);
-                }
-                if(imgran == 2) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_2_64);
-                }
-                if(imgran == 3) {
-                    imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_3_64);
-                }
+                imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.rain_1_32);
                 speedY = random.nextInt(30) + 1;
-                weather = 2;
-                System.out.print("rain");
+                weather = 1;
 
                 SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
 
@@ -250,13 +191,14 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
                     imgbit = BitmapFactory.decodeResource(getResources(), R.drawable.snow_3_8);
                 }
                 speedY = random.nextInt(20) + 1;
-                weather = 4;
-                System.out.print("snow");
+                weather = 2;
 
                 SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
 
                 list.add(Init);
             }
+
+
         }
     }
 
@@ -269,15 +211,12 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
             Init.y += Init.speedY;
 
             if(Init.y >= dvch +20 ) {
-                Init.imgbit.recycle();
                 list.remove(Init);
             }
             if(Init.x >= dvcw +20 ) {
-                Init.imgbit.recycle();
                 list.remove(Init);
             }
             if(Init.x <= -20 ) {
-                Init.imgbit.recycle();
                 list.remove(Init);
             }
         }

@@ -17,7 +17,7 @@
             android:entryValues="@array/refresh_location_values" />
 
         <ListPreference
-            android:key="weather"
+            android:key="weather_delay"
             android:title="@string/select_refresh_time_weather_title"
             android:summary="@string/select_refresh_time_weather_summary"
             android:defaultValue="0"
@@ -32,38 +32,14 @@
             android:entries="@array/snow_select_image"
             android:entryValues="@array/snow_select_image_values" />
 
-        <ListPreference
-            android:key="rain_select_image"
-            android:title="@string/rain_select_image_title"
-            android:summary="@string/select_image_summary"
-            android:defaultValue="0"
-            android:entries="@array/rain_select_image"
-            android:entryValues="@array/rain_select_image_values" />
-
-        <ListPreference
-            android:key="leave_select_image"
-            android:title="@string/leave_select_image_title"
-            android:summary="@string/select_image_summary"
-            android:defaultValue="0"
-            android:entries="@array/leave_select_image"
-            android:entryValues="@array/leave_select_image_values" />
-
-        <ListPreference
-            android:key="cherry_select_image"
-            android:title="@string/cherry_select_image_title"
-            android:summary="@string/select_image_summary"
-            android:defaultValue="0"
-            android:entries="@array/cherry_select_image"
-            android:entryValues="@array/cherry_select_image_values" />
+        <CheckBoxPreference
+            android:key="size"
+            android:title="@string/size_select_title"
+            android:summary="@string/size_select_summary"
+            android:defaultValue="true"/>
 
         <CheckBoxPreference
             android:key="effect_use"
-            android:title="@string/effect_use_title"
-            android:summary="@string/effect_use_summary"
-            android:defaultValue="true" />
-
-        <CheckBoxPreference
-            android:key=""
             android:title="@string/effect_use_title"
             android:summary="@string/effect_use_summary"
             android:defaultValue="true" />

@@ -1,4 +1,4 @@
-package com.kudosku.falling;
+package com.yuahp.falling;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -18,8 +18,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -50,9 +52,6 @@ public class AppService extends Service {
     int timerdelay_location = 0;
     static WeatherInit w;
     int weather = R.string.clear;
-    Thread thread;
-    Boolean running = false;
-    Boolean retry = false;
     SharedPreferences sharedPref;
     FileOutputStream fileOutputStream;
 

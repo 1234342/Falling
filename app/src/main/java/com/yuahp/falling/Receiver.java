@@ -1,5 +1,6 @@
-package com.kudosku.falling;
+package com.yuahp.falling;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,15 @@ public class Receiver extends BroadcastReceiver {
             Intent i= new Intent(context, AppService.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startService(i);
+        }
+        if(intent.getAction().equals("service_check")){
+            Intent i= new Intent(context, Adapter.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_ONE_SHOT);
+            try {
+                pendingIntent.send();
+            } catch (PendingIntent.CanceledException e) {
+                e.printStackTrace();
+            }
         }
     }
 

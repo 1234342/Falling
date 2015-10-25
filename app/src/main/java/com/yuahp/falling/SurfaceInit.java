@@ -1,4 +1,4 @@
-package com.kudosku.falling;
+package com.yuahp.falling;
 
 import android.graphics.Bitmap;
 

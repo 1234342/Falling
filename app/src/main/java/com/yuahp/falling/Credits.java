@@ -1,8 +1,6 @@
-package com.kudosku.falling;
+package com.yuahp.falling;
 
 import java.util.ArrayList;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,7 +28,7 @@ public class Credits extends AppCompatActivity {
         credits.add("Designing : KDPark, Aniroid");
         credits.add("Special Thanks : JungWoo Park");
 
-        ArrayAdapter adapter= new ArrayAdapter(Credits.this, android.R.layout.simple_list_item_1, credits);
+        ArrayAdapter<String> adapter= new ArrayAdapter<String>(Credits.this, android.R.layout.simple_list_item_1, credits);
 
         listview = (ListView)findViewById(R.id.credits_list);
         listview.setAdapter(adapter);

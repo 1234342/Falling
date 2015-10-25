@@ -390,9 +390,6 @@ public class AppService extends Service {
     public void onDestroy(){
         super.onDestroy();
 
-        //timer.cancel();
-        //timertask = null;
-
         handler.removeMessages(0);
 
         locationManager.removeUpdates(locationListener);

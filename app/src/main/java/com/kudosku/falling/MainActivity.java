@@ -23,10 +23,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,9 +88,7 @@ public class MainActivity extends AppCompatActivity {
         textview.setText(getResources().getText(doDayOfWeek()));
 
         final WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-
         final Drawable drawable = wallpaperManager.getDrawable();
-
         final LinearLayout linearLayout = (LinearLayout)findViewById(R.id.wallpaper);
         linearLayout.setBackground(drawable);
 
@@ -101,8 +101,14 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         }
 
-        //TextView toolbar_text = (TextView)findViewById(R.id.toolbar_text);
-        //toolbar_text.setAlpha(50);
+        Button toolbar_button = (Button)findViewById(R.id.toolbar_button);
+        toolbar_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent itn2 = new Intent(MainActivity.this, Setting.class);
+                startActivity(itn2);
+            }
+        });
 
 
         adapter = new Adapter(this);
@@ -145,9 +151,15 @@ public class MainActivity extends AppCompatActivity {
     Handler mHandler = new Handler(){
         public void handleMessage(Message msg) {
             if (!(isServiceRunning(AppService.class))) {
+                if(serviceSwitch.isChecked()){
+                    serviceSwitch.setChecked(false);
+                }
                 servicelinearLayout.setBackgroundColor(Color.rgb(255, 255, 255));
             } else {
-                servicelinearLayout.setBackgroundColor(Color.rgb(231, 76, 60));
+                if(!serviceSwitch.isChecked()){
+                    serviceSwitch.setChecked(true);
+                }
+                servicelinearLayout.setBackgroundColor(Color.rgb(26, 188, 156));
             }
 
             mHandler.sendEmptyMessageDelayed(0, 100);
@@ -253,32 +265,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.settings, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        Intent svi = new Intent(MainActivity.this, AppService.class);
-
-        //noinspection SimplifiableIfStatement
-        switch (id) {
-            case R.id.settings:
-                Intent itn2 = new Intent(MainActivity.this, Setting.class);
-                startActivity(itn2);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private int doDayOfWeek() {

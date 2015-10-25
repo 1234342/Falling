@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -46,8 +47,6 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
         context_ = context;
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         img2 = BitmapFactory.decodeResource(getResources(), R.drawable.shine_1);
-        dvch = display.getHeight();
-        dvcw = display.getWidth();
         list = new ArrayList<SurfaceInit>();
         paint = new Paint();
         holder = getHolder();
@@ -99,42 +98,44 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
                 canvas = holder.lockCanvas(null);
 
                 synchronized (holder) {
-                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    if(canvas != null) {
+                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                    if(display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
-                        dvch = display.getWidth();
-                        dvcw = display.getHeight();
-                        //Log.i("Falling-Surface", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
-                    } else {
-                        dvch = display.getHeight();
-                        dvcw = display.getWidth();
-                        //Log.i("Falling-Surface", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
-                    }
-
-                    for(int i=0; i<list.size(); i++) {
-                        SurfaceInit Init = list.get(i);
-                        if(Init.weather == 1) { // rain
-                            canvas.drawBitmap(Init.imgbit, Init.x, Init.y, null);
+                        if (display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
+                            dvch = display.getHeight();
+                            dvcw = display.getWidth();
+                            Log.i("Falling-Surface1", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
+                        } else {
+                            dvch = display.getHeight();
+                            dvcw = display.getWidth();
+                            Log.i("Falling-Surface2", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
                         }
-                        if(Init.weather == 2) { // snow
-                            matrix.reset();
-                            matrix.postRotate(ro);
-                            matrix.postTranslate(Init.x, Init.y);
-                            canvas.drawBitmap(Init.imgbit, matrix, null);
+
+                        for (int i = 0; i < list.size(); i++) {
+                            SurfaceInit Init = list.get(i);
+                            if (Init.weather == 1) { // rain
+                                canvas.drawBitmap(Init.imgbit, Init.x, Init.y, null);
+                            }
+                            if (Init.weather == 2) { // snow
+                                matrix.reset();
+                                matrix.postRotate(ro);
+                                matrix.postTranslate(Init.x, Init.y);
+                                canvas.drawBitmap(Init.imgbit, matrix, null);
+                            }
                         }
-                    }
 
-                    if(weather == 0 && Controller.cloudy <= 30) {
-                        canvas.drawBitmap(img2, 0, 0, paint);
-                    }
+                        if (weather == 0 && Controller.cloudy <= 30) {
+                            canvas.drawBitmap(img2, 0, 0, paint);
+                        }
 
-                    make();
-                    move();
+                        make();
+                        move();
 
-                    ro++;
+                        ro++;
 
-                    if (ro >= 360) {
-                        ro = 0;
+                        if (ro >= 360) {
+                            ro = 0;
+                        }
                     }
                 }
 

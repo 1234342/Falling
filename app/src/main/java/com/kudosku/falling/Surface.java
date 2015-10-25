@@ -156,42 +156,44 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                 canvas = holder.lockCanvas(null);
 
                 synchronized (holder) {
-                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    if(canvas != null) {
+                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                    if(display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
-                        dvch = display.getWidth();
-                        dvcw = display.getHeight();
-                        //Log.i("Falling-Surface", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
-                    } else {
-                        dvch = display.getHeight();
-                        dvcw = display.getWidth();
-                        //Log.i("Falling-Surface", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
-                    }
-
-                    for(int i=0; i<list.size(); i++) {
-                        SurfaceInit Init = list.get(i);
-                        if(Init.weather == 1) { // rain
-                            canvas.drawBitmap(Init.imgbit, Init.x, Init.y, null);
+                        if (display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
+                            dvch = display.getHeight();
+                            dvcw = display.getWidth();
+                            Log.i("Falling-Surface1", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
+                        } else {
+                            dvch = display.getHeight();
+                            dvcw = display.getWidth();
+                            Log.i("Falling-Surface2", String.valueOf(dvch) + ',' + String.valueOf(dvcw));
                         }
-                        if(Init.weather == 2) { // snow
-                            matrix.reset();
-                            matrix.postRotate(ro);
-                            matrix.postTranslate(Init.x, Init.y);
-                            canvas.drawBitmap(Init.imgbit, matrix, null);
+
+                        for(int i=0; i<list.size(); i++) {
+                            SurfaceInit Init = list.get(i);
+                            if(Init.weather == 1) { // rain
+                                canvas.drawBitmap(Init.imgbit, Init.x, Init.y, null);
+                            }
+                            if(Init.weather == 2) { // snow
+                                matrix.reset();
+                                matrix.postRotate(ro);
+                                matrix.postTranslate(Init.x, Init.y);
+                                canvas.drawBitmap(Init.imgbit, matrix, null);
+                            }
                         }
-                    }
 
-                    if(weather == 0 && sharedPref.getInt("cloudy", 0) <= 30) {
-                        canvas.drawBitmap(img2, 0, 0, paint);
-                    }
+                        if(weather == 0 && sharedPref.getInt("cloudy", 0) <= 30) {
+                            canvas.drawBitmap(img2, 0, 0, paint);
+                        }
 
-                    make();
-                    move();
+                        make();
+                        move();
 
-                    ro++;
+                        ro++;
 
-                    if (ro >= 360) {
-                        ro = 0;
+                        if (ro >= 360) {
+                            ro = 0;
+                        }
                     }
                 }
 

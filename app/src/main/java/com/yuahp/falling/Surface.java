@@ -251,7 +251,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         if (list.size() <= temp *2 && snow == 0) {
             if(rain >= 1) {
                 imgbit = BitmapFactory.decodeResource(getResources(), rain_Set);
-                speedY = random.nextInt(30) + 1;
+                speedY = random.nextInt(60) + 20;
                 weather = 1;
 
                 SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);

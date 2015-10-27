@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -54,6 +55,7 @@ public class AppService extends Service {
     int weather = R.string.clear;
     SharedPreferences sharedPref;
     FileOutputStream fileOutputStream;
+    static JSONObject obj;
 
     @Override
     public void onCreate() {
@@ -62,8 +64,7 @@ public class AppService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-
-        sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), Context.MODE_PRIVATE);
+        sharedPref = this.getSharedPreferences(getDefaultSharedPreferencesName(this), Context.MODE_MULTI_PROCESS);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -103,7 +104,7 @@ public class AppService extends Service {
 
                             w = t.execute(lat, lon).get();
 
-                            JSONObject obj = new JSONObject();
+                            obj = new JSONObject();
                             obj.put("temp", w.getTemperature());
                             obj.put("weather", w.getWeather());
                             obj.put("cloudy", w.getCloudy());
@@ -141,7 +142,7 @@ public class AppService extends Service {
 
                             w = t.execute(lat, lon).get();
 
-                            JSONObject obj = new JSONObject();
+                            obj = new JSONObject();
                             obj.put("temp", w.getTemperature());
                             obj.put("weather", w.getWeather());
                             obj.put("cloudy", w.getCloudy());
@@ -203,7 +204,7 @@ public class AppService extends Service {
 
                     w = t.execute(lat, lon).get();
 
-                    JSONObject obj = new JSONObject();
+                    obj = new JSONObject();
                     obj.put("temp", w.getTemperature());
                     obj.put("weather", w.getWeather());
                     obj.put("cloudy", w.getCloudy());
@@ -296,7 +297,7 @@ public class AppService extends Service {
 
                     w = t.execute(lat, lon).get();
 
-                    JSONObject obj = new JSONObject();
+                    obj = new JSONObject();
                     obj.put("temp", w.getTemperature());
                     obj.put("weather", w.getWeather());
                     obj.put("cloudy", w.getCloudy());
@@ -453,7 +454,7 @@ public class AppService extends Service {
 
                     w = t.execute(lat, lon).get();
 
-                    JSONObject obj = new JSONObject();
+                    obj = new JSONObject();
                     obj.put("temp", w.getTemperature());
                     obj.put("weather", w.getWeather());
                     obj.put("cloudy", w.getCloudy());

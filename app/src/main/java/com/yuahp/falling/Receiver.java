@@ -19,15 +19,6 @@ public class Receiver extends BroadcastReceiver {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startService(i);
         }
-        if(intent.getAction().equals("service_check")){
-            Intent i= new Intent(context, Adapter.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_ONE_SHOT);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private static String getDefaultSharedPreferencesName(Context context) {

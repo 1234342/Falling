@@ -13,12 +13,6 @@ public class Splash extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        //try{
-        //    Thread.sleep(3000); // 1000 당 1초
-        //} catch (InterruptedException e) {
-        //    e.printStackTrace();
-        //}
-
         Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

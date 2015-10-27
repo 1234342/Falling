@@ -20,7 +20,7 @@
             android:key="weather_delay"
             android:title="@string/select_refresh_time_weather_title"
             android:summary="@string/select_refresh_time_weather_summary"
-            android:defaultValue="0"
+            android:defaultValue="2"
             android:entries="@array/refresh_weather_times"
             android:entryValues="@array/refresh_weather_values" />
 

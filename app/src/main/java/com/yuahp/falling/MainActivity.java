@@ -39,6 +39,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     Adapter adapter;
     FileInputStream fileInputStream;
+    Thread thread = new Thread();
 
 
     @Override
@@ -66,9 +68,17 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPref.edit();
 
         if(sharedPref.getBoolean("first", true)) {
-            editor.clear();
-            editor.putBoolean("first",false);
+            editor.putBoolean("first", false);
+            editor.putBoolean("Gps_use", true);
+            editor.putString("location", "2");
+            editor.putString("weather_delay", "2");
+            editor.putString("snow_select_image", "0");
+            editor.putBoolean("size", true);
+            editor.putBoolean("effect_use", true);
+            editor.putBoolean("boot_start", true);
+            editor.putBoolean("auto_service", true);
             editor.apply();
+            editor.commit();
 
             Intent itn = new Intent(MainActivity.this, FirstGuide.class);
             startActivity(itn);
@@ -106,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent itn2 = new Intent(MainActivity.this, Setting.class);
-                startActivity(itn2);
+                startActivityForResult(itn2, 0);
             }
         });
 
@@ -161,8 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 servicelinearLayout.setBackgroundColor(Color.rgb(26, 188, 156));
             }
-
-            mHandler.sendEmptyMessageDelayed(0, 1000);
+            mHandler.sendEmptyMessageDelayed(0, 5000);
         }
     };
 
@@ -189,11 +198,9 @@ public class MainActivity extends AppCompatActivity {
                 adapter.array2.add(R.drawable.ic_wb_cloudy_24dp);
                 if(Math.round(obj.getDouble("temp") - 273.15) >= 30) {
                     adapter.array2.add(R.drawable.ic_thermometer_green_24dp);
-                    //adapter.array2.add(R.drawable.ic_thermometer_red_24dp);
                 } else if( Math.round(obj.getDouble("temp") - 273.15) >= 15) {
                     adapter.array2.add(R.drawable.ic_thermometer_orange_24dp);
                 } else if(Math.round(obj.getDouble("temp") - 273.15) >= 0) {
-                    //adapter.array2.add(R.drawable.ic_thermometer_green_24dp);
                     adapter.array2.add(R.drawable.ic_thermometer_red_24dp);
                 }
                 adapter.array2.add(R.drawable.ic_location_24dp);
@@ -300,4 +307,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-

@@ -18,6 +18,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
@@ -26,6 +27,12 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,7 +47,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     private Bitmap img;
     private Bitmap img2;
     private Thread thread;
-    int width,height;
     private Context context_;
     boolean retry = true;
     boolean running = false;
@@ -48,10 +54,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     private int dvch,dvcw;
     private Random random = new Random();
     private Paint paint;
-    private int ranx = 0;
     private int ro = 0;
-    private int x,y = 0;
-    private int sx,sy;
     Matrix matrix = new Matrix();
     List<SurfaceInit> list = new ArrayList<SurfaceInit>();
     int weather = 0;
@@ -75,61 +78,10 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         holder = getHolder();
         holder.setFormat(PixelFormat.TRANSLUCENT);
         holder.addCallback(this);
-        //paint.setAlpha(alpha);
 
-        handler.sendEmptyMessage(0);
-
-        sharedPref = context_.getSharedPreferences(getDefaultSharedPreferencesName(context_), context_.MODE_PRIVATE);
-
-        snow_setting = sharedPref.getString("snow_select_image", "0");
-        size_setting = sharedPref.getBoolean("size", true);
-
-        if(snow_setting.equals("0") && size_setting) {
-            snow_Set = R.drawable.snow_1_16;
-        } else {
-            snow_Set = R.drawable.snow_1_8;
-        }
-        if(snow_setting.equals("1") && size_setting) {
-            snow_Set = R.drawable.snow_2_16;
-        } else {
-            snow_Set = R.drawable.snow_2_8;
-        }
-        if(snow_setting.equals("2") && size_setting) {
-            snow_Set = R.drawable.snow_3_16;
-        } else {
-            snow_Set = R.drawable.snow_3_8;
-        }
-
-        if(size_setting) {
-            rain_Set = R.drawable.rain_1_64;
-        } else {
-            rain_Set = R.drawable.rain_1_32;
-        }
+        PreferenceManager.setDefaultValues(context_, R.xml.setting, false);
 
     }
-
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if(alpha < 250 && !alpha_turning) {
-                alpha++;
-            }
-            if(alpha == 250 && !alpha_turning) {
-                alpha_turning = true;
-            }
-            if(alpha <= 250 && alpha_turning && alpha > 50) {
-                alpha--;
-            }
-            if(alpha == 50 && alpha_turning) {
-                alpha_turning = false;
-            }
-
-            paint.reset();
-            paint.setAlpha(alpha);
-
-            handler.sendEmptyMessageDelayed(0, 50);
-        }
-    };
 
     private static String getDefaultSharedPreferencesName(Context context) {
         return context.getPackageName() + "_preferences";
@@ -163,7 +115,6 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
         setRunning(false);
         while(retry) {
             try{
-                handler.removeMessages(0);
                 List<SurfaceInit> list = null;
                 retry = false;
                 thread.join();
@@ -187,7 +138,56 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                     if(canvas != null) {
                         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                        Log.i("Falling-Surface", String.valueOf(alpha));
+                        if(alpha < 250 && !alpha_turning) {
+                            alpha++;
+                        }
+                        if(alpha == 250 && !alpha_turning) {
+                            alpha_turning = true;
+                        }
+                        if(alpha <= 250 && alpha_turning && alpha > 50) {
+                            alpha--;
+                        }
+                        if(alpha == 50 && alpha_turning) {
+                            alpha_turning = false;
+                        }
+
+                        sharedPref = context_.getSharedPreferences(getDefaultSharedPreferencesName(context_), Context.MODE_MULTI_PROCESS);
+
+                        snow_setting = sharedPref.getString("snow_select_image", "0");
+                        size_setting = sharedPref.getBoolean("size", true);
+
+                        snow_Set = 0;
+
+                        if(snow_setting.equals("0") && size_setting) {
+                            snow_Set = R.drawable.snow_1_16;
+                            Log.i("a","a");
+                        } else if(snow_setting.equals("0")) {
+                            snow_Set = R.drawable.snow_1_8;
+                            Log.i("b","b");
+                        }
+                        if(snow_setting.equals("1") && size_setting) {
+                            snow_Set = R.drawable.snow_2_16;
+                            Log.i("c","c");
+                        } else if(snow_setting.equals("1")){
+                            snow_Set = R.drawable.snow_2_8;
+                            Log.i("d","d");
+                        }
+                        if(snow_setting.equals("2") && size_setting) {
+                            snow_Set = R.drawable.snow_3_16;
+                            Log.i("e","e");
+                        } else if(snow_setting.equals("2")){
+                            snow_Set = R.drawable.snow_3_8;
+                            Log.i("f","f");
+                        }
+
+                        if(size_setting) {
+                            rain_Set = R.drawable.rain_1;
+                        } else {
+                            rain_Set = R.drawable.rain_2;
+                        }
+
+                        paint.reset();
+                        paint.setAlpha(alpha);
 
                         if (display.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
                             dvch = display.getHeight();
@@ -212,7 +212,7 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
                             }
                         }
 
-                        if(weather == 0 && sharedPref.getInt("cloudy", 0) <= 30) {
+                        if(AppService.obj.getString("weather").equals("Clear") && AppService.obj.getInt("cloudy") <= 30) {
                             canvas.drawBitmap(img2, 0, 0, paint);
                         }
 
@@ -238,38 +238,33 @@ public class Surface extends SurfaceView implements SurfaceHolder.Callback, Runn
     }
 
     public void make() {
-        int x = random.nextInt(dvcw);
-        int y = -30;
-        int speedX = 0;
-        int speedY = 0;
-        Bitmap imgbit = null;
-        int cloudy = sharedPref.getInt("cloudy", 0);
-        int snow = sharedPref.getInt("snow", 0);
-        int rain = sharedPref.getInt("rain", 0);
-        int temp = sharedPref.getInt("cloudy", 0);
+        try {
+            int x = random.nextInt(dvcw);
+            int y = -30;
+            int speedX = 0;
+            int speedY = 0;
+            Bitmap imgbit;
 
-        if (list.size() <= temp *2 && snow == 0) {
-            if(rain >= 1) {
+            /*if (list.size() <= Math.round(AppService.obj.getDouble("temp") - 273.15) && AppService.obj.getString("weather").equals("Rain")) {
                 imgbit = BitmapFactory.decodeResource(getResources(), rain_Set);
-                speedY = random.nextInt(60) + 20;
+                speedY = random.nextInt(500) + 200;
                 weather = 1;
 
-                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
+                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, weather);
 
                 list.add(Init);
-            }
-        } else if (temp *4 - list.size() > 0 && snow >= 1) {
-            if(snow >= 1) {
+            } else*/ if (list.size() <= 30 + Math.round(AppService.obj.getDouble("temp") - 273.15) *2 /*&& AppService.obj.getString("weather").equals("Snow")*/) {
                 imgbit = BitmapFactory.decodeResource(getResources(), snow_Set);
                 speedY = random.nextInt(20) + 1;
                 weather = 2;
 
-                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
+                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, weather);
 
                 list.add(Init);
+
             }
-
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

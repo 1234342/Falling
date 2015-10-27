@@ -166,7 +166,7 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
                 speedY = random.nextInt(30) + 1;
                 weather = 1;
 
-                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
+                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, weather);
 
                 list.add(Init);
             }
@@ -194,7 +194,7 @@ public class TestSurface extends SurfaceView implements SurfaceHolder.Callback, 
                 speedY = random.nextInt(20) + 1;
                 weather = 2;
 
-                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, cloudy, snow, rain, weather);
+                SurfaceInit Init = new SurfaceInit(x, y, speedX, speedY, imgbit, weather);
 
                 list.add(Init);
             }

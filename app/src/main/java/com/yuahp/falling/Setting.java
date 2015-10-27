@@ -12,19 +12,16 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.Objects;
 
-public class Setting extends PreferenceActivity implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener {
+public class Setting extends PreferenceActivity implements Preference.OnPreferenceClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting);
         addPreferencesFromResource(R.xml.setting);
 
         Preference credits = (Preference)findPreference("credits");
         Preference donates = (Preference)findPreference("donates");
-        ListPreference snow_select_image = (ListPreference)findPreference("snow_select_image");
 
-        snow_select_image.setOnPreferenceChangeListener(this);
         credits.setOnPreferenceClickListener(this);
         donates.setOnPreferenceClickListener(this);
     }
@@ -44,11 +41,5 @@ public class Setting extends PreferenceActivity implements Preference.OnPreferen
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        Toast.makeText(Setting.this,R.string.service_reboot_required, Toast.LENGTH_LONG).show();
-        return true;
     }
 }
